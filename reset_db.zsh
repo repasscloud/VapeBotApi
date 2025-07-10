@@ -31,7 +31,25 @@ docker compose exec db psql -U postgres -d ShopBotDb -c '
   );
 '
 
-# 6) apply EF migration
+# 6) pre-create serilog table
+docker compose exec db psql -U postgres -d ShopBotDb -c '
+  CREATE TABLE "logs" (
+    id            SERIAL PRIMARY KEY,
+    timestamp     TIMESTAMPTZ NOT NULL,
+    level         TEXT         NOT NULL,
+    message       TEXT         NOT NULL,
+    exception     TEXT,
+    properties    JSONB
+  );
+'
+
+# 7) apply EF migration
 docker compose run --rm cli dotnet-ef database update
+
+# 8) run pgadmin
+docker compose up -d pgadmin
+
+# 9) run vapebotapi
+docker compose up -d --build vapebotapi
 
 echo "✅ Database reset, history table created, and migrations applied."

@@ -4,6 +4,7 @@ namespace VapeBotApi.Services.Interfaces
 {
     public interface IOrderService
     {
+        // bot
         Task<Order> CreateOrderAsync(long chatId);
         Task AddItemAsync(string orderId, string productId, int quantity);
         Task<Order> GetOrderAsync(string orderId);
@@ -13,5 +14,10 @@ namespace VapeBotApi.Services.Interfaces
             AUState auState, string zipCode, string mobileNo, PaymentMethod method,
             string? addressLine2, string? addressLine3);
         Task CancelOrderAsync(string orderId);
+
+        // admin
+        Task UpdateOrderPaymentReceivedAsync(string orderId);
+        Task<List<Order>?> GetPaymentReceivedOrdersAsync();
+        Task UpdateTrackingInfo(string orderId, OrderStatus status, ShippingCarrier carrier, string TrackingNumber);
     }
 }

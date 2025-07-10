@@ -17,10 +17,10 @@ WORKDIR /app
 # copy published output
 COPY --from=build /app/publish .
 
-# (optional) explicitly tell Kestrel to listen on 80
-ENV ASPNETCORE_URLS=http://+:80
+# explicitly tell Kestrel to listen on 8080
+ENV ASPNETCORE_URLS=http://+:8080
 
 # expose the default HTTP port
-EXPOSE 80
+EXPOSE 8080
 
 ENTRYPOINT ["dotnet", "VapeBotApi.dll"]

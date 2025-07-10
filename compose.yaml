@@ -8,6 +8,8 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     networks:
       - app-network
 
@@ -18,7 +20,7 @@ services:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
     ports:
-      - "8080:80"
+      - "5050:80"
     depends_on:
       - db
     networks:
@@ -31,12 +33,12 @@ services:
     image: vapebotapi:latest
     env_file: .env
     environment:
+      - ASPNETCORE_URLS=http://+:8080
       - ASPNETCORE_ENVIRONMENT=Development
       - Telegram__BotToken=${TELEGRAM__BOTTOKEN}
       - ConnectionStrings__DefaultConnection=${CONNECTIONSTRINGS__DEFAULTCONNECTION}
     ports:
-      - "5158:80"
-      - "80:80"
+      - "5158:8080"
     depends_on:
       - db
     networks:
@@ -57,6 +59,16 @@ services:
       - app-network
     entrypoint: []
     tty: true
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    network_mode: "host"            # so ngrok can see host:5158 directly
+    env_file:
+      - .env
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
+    command: http --hostname=${NGROK_HOSTNAME} ${NGROK_FORWARD_PORT}
+    restart: unless-stopped
 
 volumes:
   db_data:

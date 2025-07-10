@@ -89,5 +89,57 @@ namespace VapeBotApi.Services
             order.LastUpdated = DateTime.UtcNow;
             await _db.SaveChangesAsync();
         }
+
+        // admin
+        public async Task UpdateOrderPaymentReceivedAsync(string orderId)
+        {
+            var order = await _db.Orders
+                                .FindAsync(orderId);
+            if (order is not null)
+            {
+                order.Status = OrderStatus.PaymentReceived;
+                order.LastUpdated = DateTime.UtcNow;
+                await _db.SaveChangesAsync();
+
+                // update the telegram API with the notification to the user now
+            }
+            else
+            {
+                // log error here
+            }
+        }
+        public async Task<List<Order>?> GetPaymentReceivedOrdersAsync()
+        {
+            var list = await _db.Orders
+                               .Where(o => o.Status == OrderStatus.PaymentReceived)
+                               .ToListAsync();
+            return list.Count > 0
+                ? list
+                : null;
+        }
+
+
+
+        public async Task UpdateTrackingInfo(string orderId, OrderStatus status, ShippingCarrier carrier, string trackingNumber)
+        {
+            var order = await _db.Orders
+                                .Where(o => o.OrderId == orderId)
+                                .FirstOrDefaultAsync();
+
+            if (order is not null)
+            {
+                order.Status = status;
+                order.Carrier = carrier;
+                order.TrackingNumber = trackingNumber;
+                order.LastUpdated = DateTime.UtcNow;
+                await _db.SaveChangesAsync();
+
+                // update the telegram API with the notification to the user now
+            }
+            else
+            {
+                // log error here
+            }
+        }
     }
 }
