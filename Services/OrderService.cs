@@ -19,13 +19,13 @@ namespace VapeBotApi.Services
         public async Task<Order> CreateOrderAsync(long chatId)
         {
             var user = await _users.GetOrCreateAsync(chatId);
-            var order = new Order { UserChatId = chatId, Status = OrderStatus.New, CreatedAt = DateTime.UtcNow };
+            var order = new Order { UserChatId = chatId, LastUpdated = DateTime.UtcNow };
             _db.Orders.Add(order);
             await _db.SaveChangesAsync();
             return order;
         }
 
-        public async Task AddItemAsync(string orderId, int productId, int quantity)
+        public async Task AddItemAsync(string orderId, string productId, int quantity)
         {
             var item = new OrderItem { OrderId = orderId, ProductId = productId, Quantity = quantity };
             _db.OrderItems.Add(item);
@@ -50,34 +50,43 @@ namespace VapeBotApi.Services
             .Include(o => o.Items).ThenInclude(i => i.Product)
             .ToListAsync();
 
-        public async Task FinalizeOrderAsync(string orderId, string address, string phone, PaymentMethod method)
+        public async Task FinalizeOrderAsync(
+            string orderId, string firstName, string secondName, string addressLine1,
+            AUState auState, string zipCode, string mobileNo, PaymentMethod method,
+            string? addressLine2, string? addressLine3)
         {
             var order = await _db.Orders.FindAsync(orderId);
             if (order == null) throw new InvalidOperationException();
 
-public string? FirstName { get; set; }
-        public string? SecondName { get; set; }
-        public string? AddressLine1 { get; set; }
-        public string? AddressLine2 { get; set; }
-        public string? AddressLine3 { get; set; }
-        public AUState? State  { get; set; }
-        public string? ZipCode { get; set; }
-        public string? MobileNo { get; set; }
+            order.FirstName = firstName;
+            order.SecondName = secondName;
+            order.AddressLine1 = addressLine1;
+            order.State = auState;
+            order.ZipCode = zipCode;
+            order.MobileNo = mobileNo;
 
+            if (!string.IsNullOrWhiteSpace(addressLine2))
+            {
+                order.AddressLine2 = addressLine2;
+            }
 
+            if (!string.IsNullOrWhiteSpace(addressLine3))
+            {
+                order.AddressLine3 = addressLine3;
+            }
 
-            order.ShippingAddress = address;
-            order.User.SavedPhone = phone;
             order.PaymentMethod = method;
             order.Status = OrderStatus.PaymentPending;
+            order.LastUpdated = DateTime.UtcNow;
             await _db.SaveChangesAsync();
         }
 
-        public async Task CancelOrderAsync(Guid orderId)
+        public async Task CancelOrderAsync(string orderId)
         {
             var order = await _db.Orders.FindAsync(orderId);
             if (order == null) throw new InvalidOperationException();
             order.Status = OrderStatus.Canceled;
+            order.LastUpdated = DateTime.UtcNow;
             await _db.SaveChangesAsync();
         }
     }

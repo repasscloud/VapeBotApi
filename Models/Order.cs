@@ -9,7 +9,7 @@ namespace VapeBotApi.Models
         [Key]
         public string OrderId { get; set; } = Nanoid.Generate();
         public long UserChatId { get; set; }
-        public OrderStatus Status { get; set; }
+        public OrderStatus Status { get; set; } = OrderStatus.New;
         public PaymentMethod PaymentMethod { get; set; }
         public string? FirstName { get; set; }
         public string? SecondName { get; set; }

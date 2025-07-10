@@ -42,17 +42,21 @@ services:
     networks:
       - app-network
 
-  # ngrok:
-  #   image: ngrok/ngrok:latest
-  #   env_file: .env
-  #   depends_on:
-  #     - vapebotapi
-  #   networks:
-  #     - app-network
-  #   command: >
-  #     http 
-  #     vapebotapi:80 
-  #     --hostname=${NGROK_URL}
+  cli:
+    build:
+      context: .
+      dockerfile: Dockerfile.cli
+    working_dir: /src
+    volumes:
+      - .:/src
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - app-network
+    entrypoint: []
+    tty: true
 
 volumes:
   db_data:
