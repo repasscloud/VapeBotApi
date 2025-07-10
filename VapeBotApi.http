@@ -1,0 +1,6 @@
+@VapeBotApi_HostAddress = http://localhost:5158
+
+GET {{VapeBotApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
