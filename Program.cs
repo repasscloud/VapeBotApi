@@ -10,6 +10,7 @@ using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types;
 using Serilog;
 using Serilog.Sinks.PostgreSQL;
+using System.Text.Json.Serialization;
 
 namespace VapeBotApi;
 
@@ -59,9 +60,18 @@ public class Program
         // Services
         builder.Services.AddScoped<IOrderService, OrderService>();
         builder.Services.AddScoped<IUpdateHandler, UpdateDispatcher>();
+        builder.Services.AddScoped<IPriceCalculatorService, PriceCalculatorService>();
 
         // Add controllers
-        builder.Services.AddControllers();
+        builder.Services
+            .AddControllers()
+            .AddJsonOptions(opts =>
+            {
+                // serialize each object once, then drop back-references
+                opts.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                // make output easier to read
+                opts.JsonSerializerOptions.WriteIndented = true;
+            });
 
         // Swagger setup
         builder.Services.AddEndpointsApiExplorer();
