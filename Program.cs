@@ -11,6 +11,7 @@ using Telegram.Bot.Types;
 using Serilog;
 using Serilog.Sinks.PostgreSQL;
 using System.Text.Json.Serialization;
+using VapeBotApi.Settings;
 
 namespace VapeBotApi;
 
@@ -60,6 +61,11 @@ public class Program
         // Services
         builder.Services.AddScoped<IOrderService, OrderService>();
         builder.Services.AddScoped<IUpdateHandler, UpdateDispatcher>();
+
+        // bind "PriceCalculator" section int othe options POCO
+        builder.Services.Configure<PriceCalculatorOptions>(
+            builder.Configuration.GetSection("PriceCalculator")
+        );
         builder.Services.AddScoped<IPriceCalculatorService, PriceCalculatorService>();
 
         // Add controllers
