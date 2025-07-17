@@ -1,0 +1,14 @@
+# Dockerfile.cli
+# Custom SDK image with EF Core CLI pre-installed
+
+FROM mcr.microsoft.com/dotnet/sdk:9.0
+
+# Install EF Core CLI as a global tool
+RUN dotnet tool install --global dotnet-ef \
+    && ln -s /root/.dotnet/tools/dotnet-ef /usr/local/bin/dotnet-ef
+
+# Ensure the global tools folder is on PATH
+ENV PATH="$PATH:/root/.dotnet/tools"
+
+# Default working directory
+WORKDIR /src
