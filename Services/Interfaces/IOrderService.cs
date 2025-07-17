@@ -29,10 +29,10 @@ namespace VapeBotApi.Services.Interfaces
         Task<bool> EmptyCartAsync(long chatId);
         Task<decimal> RequestCheckoutAsync(long chatId);
         Task<decimal> SetShippingCarrierAsync(long chatId, string shippingCarrier);
-        Task<int> SetPaymentMethodAsync(long chatId, string paymentMethod);
+        Task<string?> SetPaymentMethodAsync(long chatId, string paymentMethod);
 
         Task<IEnumerable<ShippingOptionDto>> GetShippingOptionsAsync(long chatId);
-        Task<string?> GetAccountLinkAsync(long chatId);
+        // Task<string?> GetAccountLinkAsync(long chatId);
         Task<bool> UpdateShippingDetailsAsync(Order order);
     }
 }

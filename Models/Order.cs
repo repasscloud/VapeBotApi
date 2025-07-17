@@ -12,6 +12,7 @@ namespace VapeBotApi.Models
         public OrderPaymentMethod PaymentMethod { get; set; } = OrderPaymentMethod.None;
         public string? FirstName { get; set; }
         public string? SecondName { get; set; }
+        public string? EmailAddress { get; set; }
         public string? AddressLine1 { get; set; }
         public string? AddressLine2 { get; set; }
         public string? AddressLine3 { get; set; }
@@ -26,14 +27,14 @@ namespace VapeBotApi.Models
         public decimal? RefundedAmount { get; set; }
         public string? TrackingNumber { get; set; }
         public DateTime? DeliveredAt { get; set; }
-        public string? StripePaymentIntentId { get; set; }
         public string Currency { get; set; } = "aud";
+        public string? StripePaymentIntentId { get; set; }
+        public string? StripePaymentUrl { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
 
         // Navigation
         public List<OrderItem> Items { get; set; } = new();
-        public User? User { get; set; }
     }
 
     /// <summary>

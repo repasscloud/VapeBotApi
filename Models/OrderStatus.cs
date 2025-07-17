@@ -11,6 +11,7 @@ namespace VapeBotApi.Models
         CheckoutRequested = 102,
         CarrierSelected = 110,
         PaymentMethodSet = 120,
+        ShippingDetailsRequired = 125,
         ShippingDetailsSaved = 130,
 
         // Payment (2xx)

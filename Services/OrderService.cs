@@ -1,9 +1,8 @@
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 using VapeBotApi.Data;
 using VapeBotApi.Models;
 using VapeBotApi.Models.Dto;
-using VapeBotApi.Repositories.Interfaces;
 using VapeBotApi.Services.Interfaces;
 
 namespace VapeBotApi.Services
@@ -12,11 +11,11 @@ namespace VapeBotApi.Services
     {
         private const string OrderDetailsUrl = "https://secure-endlessly-puma.ngrok-free.app/OrderDetails?Id=";
         private readonly AppDbContext _db;
-        private readonly IUserRepository _users;
-        public OrderService(AppDbContext db, IUserRepository users)
+        private readonly IPaymentService _pay;
+        public OrderService(AppDbContext db, IPaymentService pay)
         {
             _db = db;
-            _users = users;
+            _pay = pay;
         }
 
         public async Task<string> CreateOrderGetIdAsync(long chatId)
@@ -37,7 +36,6 @@ namespace VapeBotApi.Services
                 return existing.OrderId;  // has Items loaded
 
             // 2) Otherwise, create a fresh one.
-            var user = await _users.GetOrCreateAsync(chatId);
             var order = new Order { UserChatId = chatId };
             _db.Orders.Add(order);
             await _db.SaveChangesAsync();
@@ -65,7 +63,6 @@ namespace VapeBotApi.Services
                 return existing;  // has Items loaded
 
             // 2) Otherwise, create a fresh one.
-            var user = await _users.GetOrCreateAsync(chatId);
             var order = new Order { UserChatId = chatId };
             _db.Orders.Add(order);
             await _db.SaveChangesAsync();
@@ -370,7 +367,7 @@ namespace VapeBotApi.Services
             return (decimal)order.Total;
         }
 
-        public async Task<int> SetPaymentMethodAsync(long chatId, string paymentMethod)
+        public async Task<string?> SetPaymentMethodAsync(long chatId, string paymentMethod)
         {
             var order = await CreateOrderAsync(chatId);
             order.Status = OrderStatus.PaymentMethodSet;
@@ -386,14 +383,20 @@ namespace VapeBotApi.Services
             };
 
             if (method == OrderPaymentMethod.None)
-                return 0;
+                return "no payment method";
 
             order.PaymentMethod = method;
             await _db.SaveChangesAsync();
 
-            // return link to send user to create shipment tracking info :-)
-
-            return (int)method;
+            // generate payment link
+            switch (paymentMethod)
+            {
+                case "Stripe":
+                    string paymentLink = await _pay.GetStripePaymentLink(order.OrderId);
+                    return paymentLink;
+                default:
+                    return "error in switch";
+            }
         }
 
         public async Task<IEnumerable<ShippingOptionDto>> GetShippingOptionsAsync(long chatId)
@@ -415,28 +418,53 @@ namespace VapeBotApi.Services
                 });
         }
 
-        public async Task<string?> GetAccountLinkAsync(long chatId)
-        {
-            var user = await _db.Users.FirstOrDefaultAsync(i => i.ChatId == chatId);
-            if (user == null)
-            {
-                var orderId = await CreateOrderGetIdAsync(chatId);
-                if (orderId is not null)
-                    return $"{OrderDetailsUrl}{orderId}";
-                return null;
-            }
+        // public async Task<string?> GetAccountLinkAsync(long chatId)
+        // {
+        //     var user = await _db.Users.FirstOrDefaultAsync(i => i.ChatId == chatId);
+        //     if (user == null)
+        //     {
+        //         var orderId = await CreateOrderGetIdAsync(chatId);
+        //         if (orderId is not null)
+        //         {
+        //             // set the order to Status=124 (shipping details required)
+        //             var order = await GetOrderAsync(orderId);
+        //             order.Status = OrderStatus.ShippingDetailsRequired;
+        //             await _db.SaveChangesAsync();
 
-            else if (string.IsNullOrWhiteSpace(user.SavedZipCode))
-            {
-                var orderId = await CreateOrderGetIdAsync(chatId);
-                if (orderId is not null)
-                    return $"{OrderDetailsUrl}{orderId}";
-                return null;
-            }
+        //             return $"{OrderDetailsUrl}{orderId}";
+        //         }
 
-            else
-                return null;
-        }
+        //         // save the record to a log, there is something wrong here!
+        //         return null;
+        //     }
+
+        //     else if (string.IsNullOrWhiteSpace(user.SavedZipCode))
+        //     {
+        //         var orderId = await CreateOrderGetIdAsync(chatId);
+        //         if (orderId is not null)
+        //         {
+        //             // set the order Status=124 (shipping details required)
+        //             var order = await GetOrderAsync(orderId);
+        //             order.Status = OrderStatus.ShippingDetailsRequired;
+        //             await _db.SaveChangesAsync();
+
+        //             return $"{OrderDetailsUrl}{orderId}";
+        //         }
+
+        //         // save the record to a log, there is something wrong here!
+        //         return null;
+        //     }
+
+        //     else
+        //     {
+        //         // shipping details are already on file, does not require me to do anything from here
+        //         var orderId = await CreateOrderGetIdAsync(chatId);
+        //         var order = await GetOrderAsync(orderId);
+        //         order.Status = OrderStatus.ShippingDetailsSaved;
+        //         await _db.SaveChangesAsync();
+        //         return null;
+        //     }
+        // }
 
         public async Task<bool> UpdateShippingDetailsAsync(Order order)
         {
@@ -456,48 +484,8 @@ namespace VapeBotApi.Services
             existing.MobileNo = order.MobileNo;
             existing.Status = OrderStatus.ShippingDetailsSaved;
 
-            await _db.SaveChangesAsync(); 
-
-            var user = await _db.Users
-                .FirstOrDefaultAsync(u => u.ChatId == existing.UserChatId);
-
-            if (user == null)
-            {
-                // create user here
-                User newUser = new User
-                {
-                    ChatId = existing.UserChatId,
-                    Username = existing.UserChatId.ToString(),
-                    SavedFirstName = order.FirstName,
-                    SavedSecondName = order.SecondName,
-                    SavedAddressLine1 = order.AddressLine1,
-                    SavedAddressLine2 = order.AddressLine2,
-                    SavedAddressLine3 = order.AddressLine3,
-                    SavedState = order.State,
-                    SavedZipCode = order.ZipCode,
-                    SavedMobileNo = order.MobileNo,
-                    Name = $"{order.FirstName} {order.SecondName}"
-                };
-
-                await _db.Users.AddAsync(newUser);
-                return true;
-            }
-            else
-            {
-                user.Username = existing.UserChatId.ToString();
-                user.SavedFirstName = order.FirstName;
-                user.SavedSecondName = order.SecondName;
-                user.SavedAddressLine1 = order.AddressLine1;
-                user.SavedAddressLine2 = order.AddressLine2;
-                user.SavedAddressLine3 = order.AddressLine3;
-                user.SavedState = order.State;
-                user.SavedZipCode = order.ZipCode;
-                user.SavedMobileNo = order.MobileNo;
-                user.Name = $"{order.FirstName} {order.SecondName}";
-
-                await _db.SaveChangesAsync();
-                return true;
-            }
+            await _db.SaveChangesAsync();
+            return true;
         }
     }
 }

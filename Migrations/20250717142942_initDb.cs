@@ -40,6 +40,42 @@ namespace VapeBotApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Orders",
+                columns: table => new
+                {
+                    OrderId = table.Column<string>(type: "text", nullable: false),
+                    UserChatId = table.Column<long>(type: "bigint", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    PaymentMethod = table.Column<int>(type: "integer", nullable: false),
+                    FirstName = table.Column<string>(type: "text", nullable: true),
+                    SecondName = table.Column<string>(type: "text", nullable: true),
+                    EmailAddress = table.Column<string>(type: "text", nullable: true),
+                    AddressLine1 = table.Column<string>(type: "text", nullable: true),
+                    AddressLine2 = table.Column<string>(type: "text", nullable: true),
+                    AddressLine3 = table.Column<string>(type: "text", nullable: true),
+                    State = table.Column<int>(type: "integer", nullable: true),
+                    ZipCode = table.Column<string>(type: "text", nullable: true),
+                    MobileNo = table.Column<string>(type: "text", nullable: true),
+                    Carrier = table.Column<int>(type: "integer", nullable: false),
+                    SubTotal = table.Column<decimal>(type: "numeric", nullable: true),
+                    ShippingFee = table.Column<decimal>(type: "numeric", nullable: true),
+                    Tax = table.Column<decimal>(type: "numeric", nullable: true),
+                    Total = table.Column<decimal>(type: "numeric", nullable: true),
+                    RefundedAmount = table.Column<decimal>(type: "numeric", nullable: true),
+                    TrackingNumber = table.Column<string>(type: "text", nullable: true),
+                    DeliveredAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Currency = table.Column<string>(type: "text", nullable: false),
+                    StripePaymentIntentId = table.Column<string>(type: "text", nullable: true),
+                    StripePaymentUrl = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    LastUpdated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orders", x => x.OrderId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ShippingQuotes",
                 columns: table => new
                 {
@@ -53,28 +89,6 @@ namespace VapeBotApi.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ShippingQuotes", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
-                {
-                    ChatId = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Username = table.Column<string>(type: "text", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    SavedFirstName = table.Column<string>(type: "text", nullable: true),
-                    SavedSecondName = table.Column<string>(type: "text", nullable: true),
-                    SavedAddressLine1 = table.Column<string>(type: "text", nullable: true),
-                    SavedAddressLine2 = table.Column<string>(type: "text", nullable: true),
-                    SavedAddressLine3 = table.Column<string>(type: "text", nullable: true),
-                    SavedState = table.Column<int>(type: "integer", nullable: true),
-                    SavedZipCode = table.Column<string>(type: "text", nullable: true),
-                    SavedMobileNo = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.ChatId);
                 });
 
             migrationBuilder.CreateTable(
@@ -99,42 +113,25 @@ namespace VapeBotApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Orders",
+                name: "PaymentReceipts",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     OrderId = table.Column<string>(type: "text", nullable: false),
-                    UserChatId = table.Column<long>(type: "bigint", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
-                    PaymentMethod = table.Column<int>(type: "integer", nullable: false),
-                    FirstName = table.Column<string>(type: "text", nullable: true),
-                    SecondName = table.Column<string>(type: "text", nullable: true),
-                    AddressLine1 = table.Column<string>(type: "text", nullable: true),
-                    AddressLine2 = table.Column<string>(type: "text", nullable: true),
-                    AddressLine3 = table.Column<string>(type: "text", nullable: true),
-                    State = table.Column<int>(type: "integer", nullable: true),
-                    ZipCode = table.Column<string>(type: "text", nullable: true),
-                    MobileNo = table.Column<string>(type: "text", nullable: true),
-                    Carrier = table.Column<int>(type: "integer", nullable: false),
-                    SubTotal = table.Column<decimal>(type: "numeric", nullable: true),
-                    ShippingFee = table.Column<decimal>(type: "numeric", nullable: true),
-                    Tax = table.Column<decimal>(type: "numeric", nullable: true),
-                    Total = table.Column<decimal>(type: "numeric", nullable: true),
-                    RefundedAmount = table.Column<decimal>(type: "numeric", nullable: true),
-                    TrackingNumber = table.Column<string>(type: "text", nullable: true),
-                    DeliveredAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    StripePaymentIntentId = table.Column<string>(type: "text", nullable: true),
-                    Currency = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    LastUpdated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Provider = table.Column<int>(type: "integer", nullable: false),
+                    Reference = table.Column<string>(type: "text", nullable: false),
+                    ReceivedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Metadata = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Orders", x => x.OrderId);
+                    table.PrimaryKey("PK_PaymentReceipts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Orders_Users_UserChatId",
-                        column: x => x.UserChatId,
-                        principalTable: "Users",
-                        principalColumn: "ChatId",
+                        name: "FK_PaymentReceipts_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "OrderId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -167,29 +164,6 @@ namespace VapeBotApi.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "PaymentReceipts",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    OrderId = table.Column<string>(type: "text", nullable: false),
-                    Provider = table.Column<int>(type: "integer", nullable: false),
-                    Reference = table.Column<string>(type: "text", nullable: false),
-                    ReceivedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Metadata = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PaymentReceipts", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PaymentReceipts_Orders_OrderId",
-                        column: x => x.OrderId,
-                        principalTable: "Orders",
-                        principalColumn: "OrderId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_OrderItems_OrderId",
                 table: "OrderItems",
@@ -199,11 +173,6 @@ namespace VapeBotApi.Migrations
                 name: "IX_OrderItems_ProductId",
                 table: "OrderItems",
                 column: "ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Orders_UserChatId",
-                table: "Orders",
-                column: "UserChatId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PaymentReceipts_OrderId",
@@ -239,9 +208,6 @@ namespace VapeBotApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "Categories");
-
-            migrationBuilder.DropTable(
-                name: "Users");
         }
     }
 }

@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using VapeBotApi.Data;
 using VapeBotApi.Models;
 using VapeBotApi.Models.Dto;
-using VapeBotApi.Repositories.Interfaces;
 using VapeBotApi.Services.Interfaces;
 
 namespace VapeBotApi.Services
@@ -12,13 +11,11 @@ namespace VapeBotApi.Services
     {
         private readonly AppDbContext _db;
         private readonly IPriceCalculatorService _calc;
-        private readonly IUserRepository _users;
 
-        public AdminService(AppDbContext db, IPriceCalculatorService calc, IUserRepository users)
+        public AdminService(AppDbContext db, IPriceCalculatorService calc)
         {
             _db = db;
             _calc = calc;
-            _users = users;
         }
 
         #region Categories

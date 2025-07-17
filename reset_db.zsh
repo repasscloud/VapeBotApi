@@ -110,7 +110,8 @@ curl -X 'POST' \
   "rate": 26
 }'
 
-# 14) rebuild locally
+# 15) rebuild project
+dotnet clean
 dotnet restore
 dotnet build
 

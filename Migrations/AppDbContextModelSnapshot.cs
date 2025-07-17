@@ -87,6 +87,9 @@ namespace VapeBotApi.Migrations
                     b.Property<DateTime?>("DeliveredAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("EmailAddress")
+                        .HasColumnType("text");
+
                     b.Property<string>("FirstName")
                         .HasColumnType("text");
 
@@ -117,6 +120,9 @@ namespace VapeBotApi.Migrations
                     b.Property<string>("StripePaymentIntentId")
                         .HasColumnType("text");
 
+                    b.Property<string>("StripePaymentUrl")
+                        .HasColumnType("text");
+
                     b.Property<decimal?>("SubTotal")
                         .HasColumnType("numeric");
 
@@ -136,8 +142,6 @@ namespace VapeBotApi.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("OrderId");
-
-                    b.HasIndex("UserChatId");
 
                     b.ToTable("Orders");
                 });
@@ -260,60 +264,6 @@ namespace VapeBotApi.Migrations
                     b.ToTable("ShippingQuotes");
                 });
 
-            modelBuilder.Entity("VapeBotApi.Models.User", b =>
-                {
-                    b.Property<long>("ChatId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("ChatId"));
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<string>("SavedAddressLine1")
-                        .HasColumnType("text");
-
-                    b.Property<string>("SavedAddressLine2")
-                        .HasColumnType("text");
-
-                    b.Property<string>("SavedAddressLine3")
-                        .HasColumnType("text");
-
-                    b.Property<string>("SavedFirstName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("SavedMobileNo")
-                        .HasColumnType("text");
-
-                    b.Property<string>("SavedSecondName")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("SavedState")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("SavedZipCode")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Username")
-                        .HasColumnType("text");
-
-                    b.HasKey("ChatId");
-
-                    b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("VapeBotApi.Models.Order", b =>
-                {
-                    b.HasOne("VapeBotApi.Models.User", "User")
-                        .WithMany("Orders")
-                        .HasForeignKey("UserChatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("VapeBotApi.Models.OrderItem", b =>
                 {
                     b.HasOne("VapeBotApi.Models.Order", "Order")
@@ -363,11 +313,6 @@ namespace VapeBotApi.Migrations
             modelBuilder.Entity("VapeBotApi.Models.Order", b =>
                 {
                     b.Navigation("Items");
-                });
-
-            modelBuilder.Entity("VapeBotApi.Models.User", b =>
-                {
-                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,18 +1,14 @@
-using System;
 using System.Globalization;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Sinks.PostgreSQL;
-using Stripe;                // ← add this
+using Stripe;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using VapeBotApi.Data;
-using VapeBotApi.Repositories;
-using VapeBotApi.Repositories.Interfaces;
 using VapeBotApi.Services;
 using VapeBotApi.Services.Interfaces;
 using VapeBotApi.Settings;
@@ -65,12 +61,10 @@ public class Program
         // Telegram Bot client
         builder.Services.AddSingleton<ITelegramBotClient>(_ => new TelegramBotClient(botToken));
 
-        // Repositories
-        builder.Services.AddScoped<IUserRepository, UserRepository>();
-
         // Services
         builder.Services.AddScoped<IAdminService, AdminService>();
         builder.Services.AddScoped<IOrderService, OrderService>();
+        builder.Services.AddScoped<IPaymentService, PaymentService>();
         builder.Services.AddScoped<IUpdateHandler, UpdateDispatcher>();
         builder.Services.Configure<PriceCalculatorOptions>(
             builder.Configuration.GetSection("PriceCalculator")

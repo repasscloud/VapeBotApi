@@ -47,18 +47,23 @@ namespace VapeBotApi.Controllers.Public
             Ok(await _ordsvc.SetShippingCarrierAsync(userChatId, shippingCarrier));
 
         [HttpGet("~/order/setpaymentmethod/{userChatId:long}/{paymentMethod}")]
-        public async Task<IActionResult> SetPaymentMethodAsync(long userChatId, string paymentMethod) =>
-            Ok(await _ordsvc.SetPaymentMethodAsync(userChatId, paymentMethod));
-
-        [HttpGet("~/order/hasaccount/{userChatId:long}")]
-        public async Task<IActionResult> GetAccountLinkAsync(long userChatId)
+        public async Task<IActionResult> SetPaymentMethodAsync(long userChatId, string paymentMethod)
         {
-            var link = await _ordsvc.GetAccountLinkAsync(userChatId);
-
-            if (link is null)
-                return NoContent();    // or NotFound() if you prefer
-
-            return Ok(link);    
+            var url = await _ordsvc.SetPaymentMethodAsync(userChatId, paymentMethod);
+            if (string.IsNullOrEmpty(url))
+                return Ok(url);
+            return Ok(url);
         }
+
+        // [HttpGet("~/order/hasaccount/{userChatId:long}")]
+        // public async Task<IActionResult> GetAccountLinkAsync(long userChatId)
+        // {
+        //     var link = await _ordsvc.GetAccountLinkAsync(userChatId);
+
+        //     if (link is null)
+        //         return Ok(string.Empty);
+            
+        //     return Ok(link);    
+        // }
     }
 }
