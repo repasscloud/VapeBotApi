@@ -7,9 +7,7 @@ namespace VapeBotApi.Models
     public class Product
     {
         [Key]
-        public string ProductId { get; set; }
-            = $"{Nanoid.Generate(alphabet: Nanoid.Alphabets.HexadecimalLowercase, size: 10)}";
-        
+        public string ProductId { get; set; } = $"{Nanoid.Generate(alphabet: Nanoid.Alphabets.LowercaseLettersAndDigits, size: 10)}";
         public required string Name { get; set; }
         public string? ImageUrl { get; set; }
         public decimal Price { get; set; }

@@ -97,7 +97,7 @@ namespace VapeBotApi.Services
                     }
                 },
 
-                CustomerEmail = "test@test.com", //order.EmailAddress,
+                CustomerEmail = order.EmailAddress,
                 Metadata = new Dictionary<string, string>
                 {
                     ["userChatId"] = order.UserChatId.ToString(),
@@ -115,7 +115,6 @@ namespace VapeBotApi.Services
             _db.Orders.Update(order);
             await _db.SaveChangesAsync();
 
-            //return $"{AppBaseUrl}/OrderDetails/Id={order.OrderId}";
             return session.Url;
         }
     }

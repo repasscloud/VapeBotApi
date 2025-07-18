@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Stripe;
 using VapeBotApi.Data;
 using VapeBotApi.Models;
 using VapeBotApi.Models.Dto;
@@ -18,316 +17,250 @@ namespace VapeBotApi.Services
             _pay = pay;
         }
 
-        public async Task<string> CreateOrderGetIdAsync(long chatId)
+        #region create_order
+        public async Task<string?> GetCurrentNewOrderFromChatIdAsync(long chatId)
         {
-            // 1) Try to fetch an existing pending order *with* its items
-            var existing = await _db.Orders
-                .Include(o => o.Items)
+            var existingOrder = await _db.Orders
                 .FirstOrDefaultAsync(o =>
                     o.UserChatId == chatId
-                && (o.Status == OrderStatus.New
-                || o.Status == OrderStatus.ItemsAdded
-                || o.Status == OrderStatus.CheckoutRequested
-                || o.Status == OrderStatus.CarrierSelected
-                || o.Status == OrderStatus.PaymentPending)
-                );
+                    && o.Status == OrderStatus.New);
 
-            if (existing != null)
-                return existing.OrderId;  // has Items loaded
-
-            // 2) Otherwise, create a fresh one.
-            var order = new Order { UserChatId = chatId };
-            _db.Orders.Add(order);
-            await _db.SaveChangesAsync();
-
-            // 3) Its Items list is just the default new List<OrderItem>(),
-            //    ready for you to .Add or .Remove without further loading.
-            return order.OrderId;
+            return existingOrder == null ? null : existingOrder.OrderId;
         }
 
-        public async Task<Order> CreateOrderAsync(long chatId)
+        public async Task<string> GenerateNewOrderFromChatIdAsync(long chatId)
         {
-            // 1) Try to fetch an existing pending order *with* its items
-            var existing = await _db.Orders
-                .Include(o => o.Items)
-                .FirstOrDefaultAsync(o =>
-                    o.UserChatId == chatId
-                && (o.Status == OrderStatus.New
-                || o.Status == OrderStatus.ItemsAdded
-                || o.Status == OrderStatus.CheckoutRequested
-                || o.Status == OrderStatus.CarrierSelected
-                || o.Status == OrderStatus.PaymentPending)
-                );
+            var orderId = await GetCurrentNewOrderFromChatIdAsync(chatId);
 
-            if (existing != null)
-                return existing;  // has Items loaded
-
-            // 2) Otherwise, create a fresh one.
-            var order = new Order { UserChatId = chatId };
-            _db.Orders.Add(order);
-            await _db.SaveChangesAsync();
-
-            // 3) Its Items list is just the default new List<OrderItem>(),
-            //    ready for you to .Add or .Remove without further loading.
-            return order;
-        }
-
-        public async Task AddItemAsync(string orderId, string productId, int quantity)
-        {
-            var productInfo = await _db.Products
-                .Where(p => p.ProductId == productId)
-                .FirstOrDefaultAsync();
-
-            if (productInfo != null)
+            if (orderId is not null)
             {
-                var item = new OrderItem { OrderId = orderId, ProductId = productId, ProductName = productInfo.Name, Quantity = quantity };
-                _db.OrderItems.Add(item);
-                await _db.SaveChangesAsync();
-            }
-        }
-
-        public async Task<Order> GetOrderAsync(string orderId)
-        {
-            var order = await _db.Orders
-                .Include(o => o.Items)
-                .ThenInclude(i => i.Product)
-                .FirstOrDefaultAsync(o => o.OrderId == orderId);
-
-            if (order == null)
-                throw new KeyNotFoundException($"Order {orderId} not found.");
-
-            return order;
-        }
-
-        public Task<List<Order>> GetUserOrdersAsync(long chatId) => _db.Orders
-            .Where(o => o.UserChatId == chatId)
-            .Include(o => o.Items).ThenInclude(i => i.Product)
-            .ToListAsync();
-
-        public async Task FinalizeOrderAsync(
-            string orderId, string firstName, string secondName, string addressLine1,
-            AUState auState, string zipCode, string mobileNo, OrderPaymentMethod method,
-            string? addressLine2, string? addressLine3)
-        {
-            var order = await _db.Orders.FindAsync(orderId);
-            if (order == null) throw new InvalidOperationException();
-
-            order.FirstName = firstName;
-            order.SecondName = secondName;
-            order.AddressLine1 = addressLine1;
-            order.State = auState;
-            order.ZipCode = zipCode;
-            order.MobileNo = mobileNo;
-
-            if (!string.IsNullOrWhiteSpace(addressLine2))
-            {
-                order.AddressLine2 = addressLine2;
-            }
-
-            if (!string.IsNullOrWhiteSpace(addressLine3))
-            {
-                order.AddressLine3 = addressLine3;
-            }
-
-            order.PaymentMethod = method;
-            order.Status = OrderStatus.PaymentPending;
-            order.LastUpdated = DateTime.UtcNow;
-            await _db.SaveChangesAsync();
-        }
-
-        public async Task CancelOrderAsync(string orderId)
-        {
-            var order = await _db.Orders.FindAsync(orderId);
-            if (order == null) throw new InvalidOperationException();
-            order.Status = OrderStatus.Canceled;
-            order.LastUpdated = DateTime.UtcNow;
-            await _db.SaveChangesAsync();
-        }
-
-        // admin
-        public Task<List<Order>> GetAllOrdersAsync() =>
-            _db.Orders.ToListAsync();
-
-        public async Task UpdateOrderPaymentReceivedAsync(string orderId)
-        {
-            var order = await _db.Orders
-                                .FindAsync(orderId);
-            if (order is not null)
-            {
-                order.Status = OrderStatus.PaymentReceived;
-                order.LastUpdated = DateTime.UtcNow;
-                await _db.SaveChangesAsync();
-
-                // update the telegram API with the notification to the user now
+                return orderId;
             }
             else
             {
-                // log error here
+                var order = new Order { UserChatId = chatId };
+                return order.OrderId;
             }
         }
 
-        public async Task<List<Order>?> GetPaymentReceivedOrdersAsync()
+        public async Task<List<CategoryDto>?> GetListCategoryDtoListAsync()
         {
-            var list = await _db.Orders
-                               .Where(o => o.Status == OrderStatus.PaymentReceived)
-                               .ToListAsync();
-            return list.Count > 0
-                ? list
+            var entities = await _db.Categories.ToListAsync();
+
+            if (!entities.Any())
+                return null;
+
+            var dtos = entities
+                .Select(c => new CategoryDto
+                {
+                    CategoryId = c.CategoryId,
+                    Name = c.Name
+                })
+                .ToList();
+
+            return dtos;
+        }
+
+        public async Task<List<ProductDto>?> GetProductDtoListFromCategoryIdAsync(int categoryId)
+        {
+            var dtos = await _db.Products
+                .Where(p => p.CategoryId == categoryId)
+                .Select(p => new ProductDto
+                {
+                    ProductId = p.ProductId,
+                    Name = p.Name,
+                    Price = p.Price,
+                    ImageUrl = p.ImageUrl
+                })
+                .ToListAsync();
+
+            return dtos.Count > 0
+                ? dtos
                 : null;
         }
 
-        public async Task UpdateTrackingInfo(string orderId, OrderStatus status, ShippingCarrier carrier, string trackingNumber)
+        public async Task<bool> AddItemToCurrentNewOrderAsync(long chatId, string productId, int qty)
         {
-            var order = await _db.Orders
-                                .Where(o => o.OrderId == orderId)
-                                .FirstOrDefaultAsync();
-
-            if (order is not null)
-            {
-                order.Status = status;
-                order.Carrier = carrier;
-                order.TrackingNumber = trackingNumber;
-                order.LastUpdated = DateTime.UtcNow;
-                await _db.SaveChangesAsync();
-
-                // update the telegram API with the notification to the user now
-            }
-            else
-            {
-                // log error here
-            }
-        }
-
-        public async Task<bool> AddToCartAsync(long chatId, string productId, int qty)
-        {
-            var order = await CreateOrderAsync(chatId);
-
-            // 1) Load product and bail out if it doesn't exist
-            var productInfo = await _db.Products
-                .Where(p => p.ProductId == productId)
-                .FirstOrDefaultAsync();
-
-            if (productInfo is null)
-            {
-                // you could throw, log, or just return false
+            string? orderCode = await GetCurrentNewOrderFromChatIdAsync(chatId);
+            if (orderCode is null)
                 return false;
-            }
 
-            // 2) See if we already have this in the order
-            var item = order.Items.FirstOrDefault(i => i.ProductId == productId);
+            var order = await _db.Orders
+                .Include(o => o.Items)
+                .FirstAsync(o => o.OrderId == orderCode);
 
-            if (item != null)
+            if (qty <= 0)
+                return false;
+
+            var product = await _db.Products
+                .FirstOrDefaultAsync(p => p.ProductId == productId);
+            if (product is null)
+                return false;
+
+            var existing = order.Items
+                .SingleOrDefault(i => i.ProductId == productId);
+
+            if (existing != null)
             {
-                // update existing
-                item.Quantity += qty;
-                item.Price = productInfo.Price * item.Quantity;  // keep price in sync
-                _db.OrderItems.Update(item);
+                existing.Quantity += qty;
+                existing.Price = existing.Quantity * product.Price;
+                _db.OrderItems.Update(existing);
             }
             else
             {
-                // add new
                 var newItem = new OrderItem
                 {
-                    OrderId = order.OrderId,
+                    OrderId = orderCode,
                     ProductId = productId,
-                    ProductName = productInfo.Name,
+                    ProductName = product.Name,
                     Quantity = qty,
-                    Price = productInfo.Price * qty,
+                    Price = qty * product.Price
                 };
                 await _db.OrderItems.AddAsync(newItem);
             }
 
-            order.Status = OrderStatus.ItemsAdded;
             order.LastUpdated = DateTime.UtcNow;
-
             await _db.SaveChangesAsync();
             return true;
         }
 
-        public async Task<bool> SubtractFromCartAsync(long chatId, string productId, int qty)
+        public async Task<bool> RemoveItemFromCurrentNewOrderAsync(long chatId, string productId, int qty)
         {
-            var order = await CreateOrderAsync(chatId);
-            if (order == null)
+            string? orderCode = await GetCurrentNewOrderFromChatIdAsync(chatId);
+            if (orderCode is null)
                 return false;
 
-            // 1) Load product and bail if it doesn't exist
-            var productInfo = await _db.Products
-                .Where(p => p.ProductId == productId)
-                .FirstOrDefaultAsync();
-            if (productInfo == null)
+            var order = await _db.Orders
+                .Include(o => o.Items)
+                .FirstAsync(o => o.OrderId == orderCode);
+
+            if (qty <= 0)
                 return false;
 
-            // 2) Find the existing cart item
-            var item = order.Items
-                .FirstOrDefault(i => i.ProductId == productId);
-            if (item == null)
+            var existing = order.Items
+                .SingleOrDefault(i => i.ProductId == productId);
+            if (existing is null)
                 return false;
 
-            // 3) Subtract or remove
-            if (item.Quantity > qty)
+            existing.Quantity -= qty;
+            if (existing.Quantity <= 0)
             {
-                item.Quantity -= qty;
-                item.Price = productInfo.Price * item.Quantity;  // keep price in sync
-                _db.OrderItems.Update(item);
+                _db.OrderItems.Remove(existing);
             }
             else
             {
-                _db.OrderItems.Remove(item);
+                var productPrice = await _db.Products
+                    .Where(p => p.ProductId == productId)
+                    .Select(p => p.Price)
+                    .FirstAsync();
+                existing.Price = existing.Quantity * productPrice;
+                _db.OrderItems.Update(existing);
             }
 
-            order.Status = OrderStatus.ItemsAdded;
             order.LastUpdated = DateTime.UtcNow;
-
             await _db.SaveChangesAsync();
             return true;
         }
 
-        public async Task<bool> EmptyCartAsync(long chatId)
+        public async Task<bool> EmptyCurrentNewOrderAsync(long chatId)
         {
-            var order = await CreateOrderAsync(chatId);
+            string? orderCode = await GetCurrentNewOrderFromChatIdAsync(chatId);
+            if (orderCode is null)
+                return true;
+
+            var order = await _db.Orders
+                .Include(o => o.Items)
+                .FirstAsync(o => o.OrderId == orderCode);
 
             if (order == null)
-                return false;
+                return true;
 
-            order.Status = OrderStatus.Canceled;
+            order.Status = OrderStatus.Cancelled;
             order.LastUpdated = DateTime.UtcNow;
-
             await _db.SaveChangesAsync();
             return true;
         }
+        #endregion
 
-        public async Task<decimal> RequestCheckoutAsync(long chatId)
+        #region show_cart
+        public async Task<List<OrderItem>?> ShowCurrentNewOrderItemsAsync(long chatId)
         {
-            var order = await CreateOrderAsync(chatId);
-            if (order == null)
-                return 0.00m;
+            string? orderCode = await GetCurrentNewOrderFromChatIdAsync(chatId);
+            if (orderCode is null)
+                return null;
 
-            // mark as checkout requested
-            order.Status = OrderStatus.CheckoutRequested;
-            order.LastUpdated = DateTime.UtcNow;
-            await _db.SaveChangesAsync();
+            var order = await _db.Orders
+                .Include(o => o.Items)
+                .FirstAsync(o => o.OrderId == orderCode);
 
-            // sum up all item prices
+            if (!order.Items.Any())
+                return null;
+
+            return order.Items.ToList();
+        }
+        #endregion
+
+        #region checkout_order
+        public async Task<decimal?> RequestCheckoutAsync(long chatId)
+        {
+            string? orderCode = await GetCurrentNewOrderFromChatIdAsync(chatId);
+            if (orderCode is null)
+                return null;
+
+            var order = await _db.Orders
+                .Include(o => o.Items)
+                .FirstAsync(o => o.OrderId == orderCode);
+
+            if (!order.Items.Any())
+                return null;
+
             var total = order.Items.Sum(i => i.Price);
             return total;
         }
 
-        public async Task<decimal> SetShippingCarrierAsync(long chatId, string carrierCode)
+        public async Task<List<ShippingOptionDto>?> GetShippingOptionsAsync(long chatId)
         {
-            // 1) grab the order
-            var orderId = await CreateOrderGetIdAsync(chatId);
-            if (orderId == null)
-                return 0.00m;
+            string? orderCode = await GetCurrentNewOrderFromChatIdAsync(chatId);
+            if (orderCode is null)
+                return null;
 
-            var order = await CreateOrderAsync(chatId);
-            if (order == null)
-                return 0.00m;
+            var order = await _db.Orders
+                .Include(o => o.Items)
+                .FirstAsync(o => o.OrderId == orderCode);
+
+            if (!order.Items.Any())
+                return null;
+
+            var totalItems = order.Items?.Sum(item => item.Quantity) ?? 0;
+            var quotes = await _db.ShippingQuotes.ToListAsync();
+            return quotes
+                .Where(q => totalItems < q.MaxItems)
+                .Select(q =>
+                {
+                    var shipments = (totalItems + q.Capacity - 1) / q.Capacity;
+                    return new ShippingOptionDto
+                    {
+                        Service = q.ServiceName,
+                        Price = shipments * q.Rate
+                    };
+                })
+                .ToList();
+        }
+
+        public async Task<bool> SetShippingCarrierAsync(long chatId, string carrierCode)
+        {
+            string? orderCode = await GetCurrentNewOrderFromChatIdAsync(chatId);
+            if (orderCode is null)
+                return false;
 
             var shippingOptions = await GetShippingOptionsAsync(chatId);
+            if (shippingOptions is null)
+                return false;
 
             var match = shippingOptions
-                .FirstOrDefault(o => o.Service == carrierCode)
-                ?? throw new InvalidOperationException($"No shipping option for {carrierCode}");
+                .FirstOrDefault(o => o.Service == carrierCode);
+            if (match is null)
+                return false;
 
             decimal shippingPrice = match.Price;
 
@@ -338,11 +271,17 @@ namespace VapeBotApi.Services
                 _ => (ShippingCarrier.None, 0.00m)
             };
 
+            var order = await _db.Orders
+                .Include(o => o.Items)
+                .FirstAsync(o => o.OrderId == orderCode);
+
+            if (!order.Items.Any())
+                return false;
+
             order.Carrier = carrier;
-            order.Status = OrderStatus.CarrierSelected;
             order.LastUpdated = DateTime.UtcNow;
 
-            // 4) compute amounts
+            // compute amounts
             var itemsTotal = order.Items.Sum(i => i.Price);
             const decimal gstRate = 0.10m;  // 10% GST
 
@@ -364,14 +303,22 @@ namespace VapeBotApi.Services
 
             // commit
             await _db.SaveChangesAsync();
-            return (decimal)order.Total;
+            return true;
         }
 
         public async Task<string?> SetPaymentMethodAsync(long chatId, string paymentMethod)
         {
-            var order = await CreateOrderAsync(chatId);
-            order.Status = OrderStatus.PaymentMethodSet;
-            order.LastUpdated = DateTime.UtcNow;
+            string? orderCode = await GetCurrentNewOrderFromChatIdAsync(chatId);
+            if (orderCode is null)
+                return null;
+
+            var order = await _db.Orders
+                .Include(o => o.Items)
+                .FirstAsync(o => o.OrderId == orderCode);
+
+            if (!order.Items.Any())
+                return null;
+
             OrderPaymentMethod method = paymentMethod switch
             {
                 "Stripe" => OrderPaymentMethod.Stripe,
@@ -383,109 +330,353 @@ namespace VapeBotApi.Services
             };
 
             if (method == OrderPaymentMethod.None)
-                return "no payment method";
+                return null;
 
             order.PaymentMethod = method;
+            order.LastUpdated = DateTime.UtcNow;
             await _db.SaveChangesAsync();
 
-            // generate payment link
-            switch (paymentMethod)
-            {
-                case "Stripe":
-                    string paymentLink = await _pay.GetStripePaymentLink(order.OrderId);
-                    return paymentLink;
-                default:
-                    return "error in switch";
-            }
+            return "payment page link goes here";
         }
+        #endregion
 
-        public async Task<IEnumerable<ShippingOptionDto>> GetShippingOptionsAsync(long chatId)
+        #region webapp
+        public async Task<string> FinalizeOrderAsync(Order update)
         {
-            var orderId = await CreateOrderGetIdAsync(chatId);
-            var order = await GetOrderAsync(orderId);
-            var totalItems = order.Items?.Sum(item => item.Quantity) ?? 0;
-            var quotes = await _db.ShippingQuotes.ToListAsync();
-            return quotes
-                .Where(q => totalItems < q.MaxItems)
-                .Select(q =>
-                {
-                    var shipments = (totalItems + q.Capacity - 1) / q.Capacity;
-                    return new ShippingOptionDto
-                    {
-                        Service = q.ServiceName,
-                        Price = shipments * q.Rate
-                    };
-                });
+            var order = await _db.Orders
+                .Include(o => o.Items)
+                .FirstAsync(o => o.OrderId == update.OrderId);
+            if (order is null)
+                return "https://www.google.com.au/";
+
+            order.FirstName = update.FirstName;
+            order.SecondName = update.SecondName;
+            order.MobileNo = update.MobileNo;
+            order.AddressLine1 = update.AddressLine1;
+            order.AddressLine2 = update.AddressLine2;
+            order.AddressLine3 = update.AddressLine3;
+            order.EmailAddress = update.EmailAddress;
+            order.State = update.State;
+            order.ZipCode = update.ZipCode;
+            order.Status = OrderStatus.PaymentPending;
+            order.LastUpdated = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync();
+
+            switch (order.PaymentMethod)
+            {
+                case OrderPaymentMethod.Stripe:
+                    var url = await _pay.GetStripePaymentLink(order.OrderId);
+                    return url;
+                default:
+                    return "https://www.google.com.au/";
+            }
+
         }
+        #endregion
 
-        // public async Task<string?> GetAccountLinkAsync(long chatId)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // public async Task<string> CreateOrderGetIdAsync(long chatId)
         // {
-        //     var user = await _db.Users.FirstOrDefaultAsync(i => i.ChatId == chatId);
-        //     if (user == null)
+        //     // 1) Try to fetch an existing pending order *with* its items
+        //     var existing = await _db.Orders
+        //         .Include(o => o.Items)
+        //         .FirstOrDefaultAsync(o =>
+        //             o.UserChatId == chatId
+        //             && (o.Status == OrderStatus.New
+        //             || o.Status == OrderStatus.PaymentPending)
+        //         );
+
+        //     if (existing != null)
+        //         return existing.OrderId;  // has Items loaded
+
+        //     // 2) Otherwise, create a fresh one.
+        //     var order = new Order { UserChatId = chatId };
+        //     _db.Orders.Add(order);
+        //     await _db.SaveChangesAsync();
+
+        //     // 3) Its Items list is just the default new List<OrderItem>(),
+        //     //    ready for you to .Add or .Remove without further loading.
+        //     return order.OrderId;
+        // }
+
+        // public async Task<Order> CreateOrderAsync(long chatId)
+        // {
+        //     // 1) Try to fetch an existing pending order *with* its items
+        //     var existing = await _db.Orders
+        //         .Include(o => o.Items)
+        //         .FirstOrDefaultAsync(o =>
+        //             o.UserChatId == chatId
+        //             && (o.Status == OrderStatus.New
+        //             || o.Status == OrderStatus.PaymentPending)
+        //         );
+
+        //     if (existing != null)
+        //         return existing;  // has Items loaded
+
+        //     // 2) Otherwise, create a fresh one.
+        //     var order = new Order { UserChatId = chatId };
+        //     _db.Orders.Add(order);
+        //     await _db.SaveChangesAsync();
+
+        //     // 3) Its Items list is just the default new List<OrderItem>(),
+        //     //    ready for you to .Add or .Remove without further loading.
+        //     return order;
+        // }
+
+        // public async Task AddItemAsync(string orderId, string productId, int quantity)
+        // {
+        //     var productInfo = await _db.Products
+        //         .Where(p => p.ProductId == productId)
+        //         .FirstOrDefaultAsync();
+
+        //     if (productInfo != null)
         //     {
-        //         var orderId = await CreateOrderGetIdAsync(chatId);
-        //         if (orderId is not null)
-        //         {
-        //             // set the order to Status=124 (shipping details required)
-        //             var order = await GetOrderAsync(orderId);
-        //             order.Status = OrderStatus.ShippingDetailsRequired;
-        //             await _db.SaveChangesAsync();
-
-        //             return $"{OrderDetailsUrl}{orderId}";
-        //         }
-
-        //         // save the record to a log, there is something wrong here!
-        //         return null;
-        //     }
-
-        //     else if (string.IsNullOrWhiteSpace(user.SavedZipCode))
-        //     {
-        //         var orderId = await CreateOrderGetIdAsync(chatId);
-        //         if (orderId is not null)
-        //         {
-        //             // set the order Status=124 (shipping details required)
-        //             var order = await GetOrderAsync(orderId);
-        //             order.Status = OrderStatus.ShippingDetailsRequired;
-        //             await _db.SaveChangesAsync();
-
-        //             return $"{OrderDetailsUrl}{orderId}";
-        //         }
-
-        //         // save the record to a log, there is something wrong here!
-        //         return null;
-        //     }
-
-        //     else
-        //     {
-        //         // shipping details are already on file, does not require me to do anything from here
-        //         var orderId = await CreateOrderGetIdAsync(chatId);
-        //         var order = await GetOrderAsync(orderId);
-        //         order.Status = OrderStatus.ShippingDetailsSaved;
+        //         var item = new OrderItem { OrderId = orderId, ProductId = productId, ProductName = productInfo.Name, Quantity = quantity };
+        //         _db.OrderItems.Add(item);
         //         await _db.SaveChangesAsync();
-        //         return null;
         //     }
         // }
 
-        public async Task<bool> UpdateShippingDetailsAsync(Order order)
-        {
-            var existing = await _db.Orders
-                .FirstOrDefaultAsync(o => o.OrderId == order.OrderId);
+        // public async Task<Order> GetOrderAsync(string orderId)
+        // {
+        //     var order = await _db.Orders
+        //         .Include(o => o.Items)
+        //         .ThenInclude(i => i.Product)
+        //         .FirstOrDefaultAsync(o => o.OrderId == orderId);
 
-            if (existing == null)
-                return false;
+        //     if (order == null)
+        //         throw new KeyNotFoundException($"Order {orderId} not found.");
 
-            existing.FirstName = order.FirstName;
-            existing.SecondName = order.SecondName;
-            existing.AddressLine1 = order.AddressLine1;
-            existing.AddressLine2 = order.AddressLine2;
-            existing.AddressLine3 = order.AddressLine3;
-            existing.State = order.State;
-            existing.ZipCode = order.ZipCode;
-            existing.MobileNo = order.MobileNo;
-            existing.Status = OrderStatus.ShippingDetailsSaved;
+        //     return order;
+        // }
 
-            await _db.SaveChangesAsync();
-            return true;
-        }
+        // public Task<List<Order>> GetUserOrdersAsync(long chatId) => _db.Orders
+        //     .Where(o => o.UserChatId == chatId)
+        //     .Include(o => o.Items).ThenInclude(i => i.Product)
+        //     .ToListAsync();
+
+        // public async Task FinalizeOrderAsync(
+        //     string orderId, string firstName, string secondName, string addressLine1,
+        //     AUState auState, string zipCode, string mobileNo, OrderPaymentMethod method,
+        //     string? addressLine2, string? addressLine3)
+        // {
+        //     var order = await _db.Orders.FindAsync(orderId);
+        //     if (order == null) throw new InvalidOperationException();
+
+        //     order.FirstName = firstName;
+        //     order.SecondName = secondName;
+        //     order.AddressLine1 = addressLine1;
+        //     order.State = auState;
+        //     order.ZipCode = zipCode;
+        //     order.MobileNo = mobileNo;
+
+        //     if (!string.IsNullOrWhiteSpace(addressLine2))
+        //     {
+        //         order.AddressLine2 = addressLine2;
+        //     }
+
+        //     if (!string.IsNullOrWhiteSpace(addressLine3))
+        //     {
+        //         order.AddressLine3 = addressLine3;
+        //     }
+
+        //     order.PaymentMethod = method;
+        //     order.Status = OrderStatus.PaymentPending;
+        //     order.LastUpdated = DateTime.UtcNow;
+        //     await _db.SaveChangesAsync();
+        // }
+
+        // public async Task CancelOrderAsync(string orderId)
+        // {
+        //     var order = await _db.Orders.FindAsync(orderId);
+        //     if (order == null) throw new InvalidOperationException();
+        //     order.Status = OrderStatus.Cancelled;
+        //     order.LastUpdated = DateTime.UtcNow;
+        //     await _db.SaveChangesAsync();
+        // }
+
+        // // admin
+        // public Task<List<Order>> GetAllOrdersAsync() =>
+        //     _db.Orders.ToListAsync();
+
+        // public async Task UpdateOrderPaymentReceivedAsync(string orderId)
+        // {
+        //     var order = await _db.Orders
+        //                         .FindAsync(orderId);
+        //     if (order is not null)
+        //     {
+        //         order.Status = OrderStatus.PaymentReceived;
+        //         order.LastUpdated = DateTime.UtcNow;
+        //         await _db.SaveChangesAsync();
+
+        //         // update the telegram API with the notification to the user now
+        //     }
+        //     else
+        //     {
+        //         // log error here
+        //     }
+        // }
+
+        // public async Task<List<Order>?> GetPaymentReceivedOrdersAsync()
+        // {
+        //     var list = await _db.Orders
+        //                 .Where(o => o.Status == OrderStatus.PaymentReceived)
+        //                 .ToListAsync();
+        //     return list.Count > 0
+        //         ? list
+        //         : null;
+        // }
+
+
+
+        // public async Task<bool> AddToCartAsync(long chatId, string productId, int qty)
+        // {
+        //     var order = await CreateOrderAsync(chatId);
+
+        //     // 1) Load product and bail out if it doesn't exist
+        //     var productInfo = await _db.Products
+        //         .Where(p => p.ProductId == productId)
+        //         .FirstOrDefaultAsync();
+
+        //     if (productInfo is null)
+        //     {
+        //         // you could throw, log, or just return false
+        //         return false;
+        //     }
+
+        //     // 2) See if we already have this in the order
+        //     var item = order.Items.FirstOrDefault(i => i.ProductId == productId);
+
+        //     if (item != null)
+        //     {
+        //         // update existing
+        //         item.Quantity += qty;
+        //         item.Price = productInfo.Price * item.Quantity;  // keep price in sync
+        //         _db.OrderItems.Update(item);
+        //     }
+        //     else
+        //     {
+        //         // add new
+        //         var newItem = new OrderItem
+        //         {
+        //             OrderId = order.OrderId,
+        //             ProductId = productId,
+        //             ProductName = productInfo.Name,
+        //             Quantity = qty,
+        //             Price = productInfo.Price * qty,
+        //         };
+        //         await _db.OrderItems.AddAsync(newItem);
+        //     }
+
+        //     order.LastUpdated = DateTime.UtcNow;
+
+        //     await _db.SaveChangesAsync();
+        //     return true;
+        // }
+
+        // public async Task<bool> SubtractFromCartAsync(long chatId, string productId, int qty)
+        // {
+        //     var order = await CreateOrderAsync(chatId);
+        //     if (order == null)
+        //         return false;
+
+        //     // 1) Load product and bail if it doesn't exist
+        //     var productInfo = await _db.Products
+        //         .Where(p => p.ProductId == productId)
+        //         .FirstOrDefaultAsync();
+        //     if (productInfo == null)
+        //         return false;
+
+        //     // 2) Find the existing cart item
+        //     var item = order.Items
+        //         .FirstOrDefault(i => i.ProductId == productId);
+        //     if (item == null)
+        //         return false;
+
+        //     // 3) Subtract or remove
+        //     if (item.Quantity > qty)
+        //     {
+        //         item.Quantity -= qty;
+        //         item.Price = productInfo.Price * item.Quantity;  // keep price in sync
+        //         _db.OrderItems.Update(item);
+        //     }
+        //     else
+        //     {
+        //         _db.OrderItems.Remove(item);
+        //     }
+
+        //     order.LastUpdated = DateTime.UtcNow;
+
+        //     await _db.SaveChangesAsync();
+        //     return true;
+        // }
+
+        // public async Task<bool> EmptyCartAsync(long chatId)
+        // {
+        //     var order = await CreateOrderAsync(chatId);
+
+        //     if (order == null)
+        //         return false;
+
+        //     order.Status = OrderStatus.Cancelled;
+        //     order.LastUpdated = DateTime.UtcNow;
+
+        //     await _db.SaveChangesAsync();
+        //     return true;
+        // }
+
+
+
+
+
+
+
+
+
+        // public async Task<bool> UpdateShippingDetailsAsync(Order order)
+        // {
+        //     var existing = await _db.Orders
+        //         .FirstOrDefaultAsync(o => o.OrderId == order.OrderId);
+
+        //     if (existing == null)
+        //         return false;
+
+        //     existing.FirstName = order.FirstName;
+        //     existing.SecondName = order.SecondName;
+        //     existing.AddressLine1 = order.AddressLine1;
+        //     existing.AddressLine2 = order.AddressLine2;
+        //     existing.AddressLine3 = order.AddressLine3;
+        //     existing.State = order.State;
+        //     existing.ZipCode = order.ZipCode;
+        //     existing.MobileNo = order.MobileNo;
+
+        //     await _db.SaveChangesAsync();
+        //     return true;
+        // }
     }
 }

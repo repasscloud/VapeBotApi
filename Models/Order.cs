@@ -56,7 +56,7 @@ namespace VapeBotApi.Models
     {
         None = 0,
         AustPost = 100,
-        ExpressPost = 101
+        ExpressPost = 110
     }
 
     public enum OrderPaymentMethod
@@ -64,12 +64,12 @@ namespace VapeBotApi.Models
         None     =   0,  // “00”
 
         // External API
-        Stripe = 10,
-        Crypto = 11,
-        PayPal = 12,
+        Stripe = 100,
+        Crypto = 110,
+        PayPal = 120,
 
         // Cash
-        PayID = 20,
-        InPerson =  21,
+        PayID = 200,
+        InPerson =  210,
     }
 }

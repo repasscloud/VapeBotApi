@@ -4,7 +4,7 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = "_Layout";
-    bool editable = Model.Order.Status == OrderStatus.PaymentMethodSet;
+    bool editable = Model.Order.Status == OrderStatus.New;
 }
 
 <!-- Order Summary Card -->

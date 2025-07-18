@@ -6,33 +6,54 @@ namespace VapeBotApi.Services.Interfaces
 {
     public interface IOrderService
     {
-        // bot
-        Task<string> CreateOrderGetIdAsync(long chatId);
-        Task<Order> CreateOrderAsync(long chatId);
-        Task AddItemAsync(string orderId, string productId, int quantity);
-        Task<Order> GetOrderAsync(string orderId);
-        Task<List<Order>> GetUserOrdersAsync(long chatId);
-        Task FinalizeOrderAsync(
-            string orderId, string firstName, string secondName, string addressLine1,
-            AUState auState, string zipCode, string mobileNo, OrderPaymentMethod method,
-            string? addressLine2, string? addressLine3);
-        Task CancelOrderAsync(string orderId);
+        // create_order
+        Task<string?> GetCurrentNewOrderFromChatIdAsync(long chatId);
+        Task<string> GenerateNewOrderFromChatIdAsync(long chatId);
+        Task<List<CategoryDto>?> GetListCategoryDtoListAsync();
+        Task<List<ProductDto>?> GetProductDtoListFromCategoryIdAsync(int categoryId);
+        Task<bool> AddItemToCurrentNewOrderAsync(long chatId, string productId, int quantity);
+        Task<bool> RemoveItemFromCurrentNewOrderAsync(long chatId, string productId, int qty);
+        Task<bool> EmptyCurrentNewOrderAsync(long chatId);
 
-        // admin
-        Task<List<Order>> GetAllOrdersAsync();
-        Task UpdateOrderPaymentReceivedAsync(string orderId);
-        Task<List<Order>?> GetPaymentReceivedOrdersAsync();
-        Task UpdateTrackingInfo(string orderId, OrderStatus status, ShippingCarrier carrier, string TrackingNumber);
+        // show_cart
+        Task<List<OrderItem>?> ShowCurrentNewOrderItemsAsync(long chatId);
 
-        Task<bool> AddToCartAsync(long chatId, string productId, int qty);
-        Task<bool> SubtractFromCartAsync(long chatId, string productId, int qty);
-        Task<bool> EmptyCartAsync(long chatId);
-        Task<decimal> RequestCheckoutAsync(long chatId);
-        Task<decimal> SetShippingCarrierAsync(long chatId, string shippingCarrier);
+        // checkout
+        Task<decimal?> RequestCheckoutAsync(long chatId);
+        Task<List<ShippingOptionDto>?> GetShippingOptionsAsync(long chatId);
+        Task<bool> SetShippingCarrierAsync(long chatId, string shippingCarrier);
         Task<string?> SetPaymentMethodAsync(long chatId, string paymentMethod);
 
-        Task<IEnumerable<ShippingOptionDto>> GetShippingOptionsAsync(long chatId);
-        // Task<string?> GetAccountLinkAsync(long chatId);
-        Task<bool> UpdateShippingDetailsAsync(Order order);
+        // webapp
+        Task<string> FinalizeOrderAsync(Order order);
+
+        // bot
+        // Task<string> CreateOrderGetIdAsync(long chatId);
+        // Task<Order> CreateOrderAsync(long chatId);
+        // Task AddItemAsync(string orderId, string productId, int quantity);
+        // Task<Order> GetOrderAsync(string orderId);
+        // Task<List<Order>> GetUserOrdersAsync(long chatId);
+        // Task FinalizeOrderAsync(
+        //     string orderId, string firstName, string secondName, string addressLine1,
+        //     AUState auState, string zipCode, string mobileNo, OrderPaymentMethod method,
+        //     string? addressLine2, string? addressLine3);
+        // Task CancelOrderAsync(string orderId);
+
+        // // admin
+        // Task<List<Order>> GetAllOrdersAsync();
+        // Task UpdateOrderPaymentReceivedAsync(string orderId);
+        // Task<List<Order>?> GetPaymentReceivedOrdersAsync();
+        
+
+        // Task<bool> AddToCartAsync(long chatId, string productId, int qty);
+        // Task<bool> SubtractFromCartAsync(long chatId, string productId, int qty);
+        // Task<bool> EmptyCartAsync(long chatId);
+        
+        
+        
+
+        
+        // // Task<string?> GetAccountLinkAsync(long chatId);
+        // Task<bool> UpdateShippingDetailsAsync(Order order);
     }
 }

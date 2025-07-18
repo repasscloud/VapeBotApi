@@ -229,6 +229,27 @@ namespace VapeBotApi.Services
         public async Task<ShippingQuote> GetShippingQuoteByIdAsync(int quoteId) =>
             await _db.ShippingQuotes
                 .FirstOrDefaultAsync(q => q.Id == quoteId) ?? new ShippingQuote { ServiceName = "NOT EXIST" };
+
+        public async Task UpdateTrackingInfo(string orderId, OrderStatus status, string trackingNumber)
+        {
+            var order = await _db.Orders
+                            .Where(o => o.OrderId == orderId)
+                            .FirstOrDefaultAsync();
+
+            if (order is not null)
+            {
+                order.Status = status;
+                order.TrackingNumber = trackingNumber;
+                order.LastUpdated = DateTime.UtcNow;
+                await _db.SaveChangesAsync();
+
+                // update the telegram API with the notification to the user now
+            }
+            else
+            {
+                // log error here
+            }
+        }
         #endregion
     }   
 }

@@ -34,5 +34,7 @@ namespace VapeBotApi.Services.Interfaces
         Task<bool> UpdateShippingQuoteAsync(ShippingQuote quote);
         Task<bool> DeleteShippingQuoteAsync(int quoteId);
         Task<ShippingQuote> GetShippingQuoteByIdAsync(int quoteId);
+
+        Task UpdateTrackingInfo(string orderId, OrderStatus status, string TrackingNumber);
     }
 }
