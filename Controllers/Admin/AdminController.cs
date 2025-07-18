@@ -135,13 +135,13 @@ namespace VapeBotApi.Controllers.Admin
         #endregion
 
         #region Order
-        [HttpGet("~/api/admin/order")]
-        public async Task<IActionResult> GetAllOrdersAsync() =>
-            Ok(await _ordsvc.GetAllOrdersAsync());
+        // [HttpGet("~/api/admin/order")]
+        // public async Task<IActionResult> GetAllOrdersAsync() =>
+        //     Ok(await _ordsvc.GetAllOrdersAsync());
 
-        [HttpGet("~/api/admin/order/{id}")]
-        public async Task<IActionResult> GetOrderByIdAsync(string id) =>
-            Ok(await _ordsvc.GetOrderAsync(id));
+        // [HttpGet("~/api/admin/order/{id}")]
+        // public async Task<IActionResult> GetOrderByIdAsync(string id) =>
+        //     Ok(await _ordsvc.GetOrderAsync(id));
         #endregion
 
         #region Shipping

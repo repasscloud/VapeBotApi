@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using VapeBotApi.Models;
 using VapeBotApi.Services.Interfaces;
 
 namespace VapeBotApi.Controllers.Public
@@ -10,60 +11,64 @@ namespace VapeBotApi.Controllers.Public
         private readonly IOrderService _ordsvc;
         public OrderController(IOrderService orderService) => _ordsvc = orderService;
 
+        #region create_order
+        [HttpGet("~/order/current/{userChatId:long}")]
+        public async Task<IActionResult> GetCurrentNewOrderFromChatIdAsync(long userChatId) =>
+            Ok(await _ordsvc.GetCurrentNewOrderFromChatIdAsync(userChatId));
+
         [HttpGet("~/order/new/{userChatId:long}")]
-        public async Task<IActionResult> CreateNewOrderAsync(long userChatId) =>
-            Ok(await _ordsvc.CreateOrderGetIdAsync(userChatId));
+        public async Task<IActionResult> GenerateNewOrderFromChatIdAsync(long userChatId) =>
+            Ok(await _ordsvc.GenerateNewOrderFromChatIdAsync(userChatId));
+
+        [HttpGet("~/category/list/dto")]
+        public async Task<IActionResult> GetListCategoryDtoListAsync() =>
+            Ok(await _ordsvc.GetListCategoryDtoListAsync());
+
+        [HttpGet("~/category/list/products/fromcategoryid/{catId:int}")]
+        public async Task<IActionResult> GetProductDtoListFromCategoryIdAsync(int categoryId) =>
+            Ok(await _ordsvc.GetProductDtoListFromCategoryIdAsync(categoryId));
 
         [HttpGet("~/cart/add/{userChatId:long}/{productId}/{qty:int}")]
-        public async Task<IActionResult> AddToCartAsync(long userChatId, string productId, int qty) =>
-            Ok(await _ordsvc.AddToCartAsync(userChatId, productId, qty));
+        public async Task<IActionResult> AddItemToCurrentNewOrderAsync(long userChatId, string productId, int qty) =>
+            Ok(await _ordsvc.AddItemToCurrentNewOrderAsync(userChatId, productId, qty));
 
         [HttpGet("~/cart/sub/{userChatId:long}/{productId}/{qty:int}")]
-        public async Task<IActionResult> SubtractFromCartAsync(long userChatId, string productId, int qty) =>
-            Ok(await _ordsvc.AddToCartAsync(userChatId, productId, qty));
+        public async Task<IActionResult> RemoveItemFromCurrentNewOrderAsync(long userChatId, string productId, int qty) =>
+            Ok(await _ordsvc.RemoveItemFromCurrentNewOrderAsync(userChatId, productId, qty));
 
         [HttpGet("~/cart/empty/{userChatId:long}")]
-        public async Task<IActionResult> EmptyCartAsync(long userChatId) =>
-            Ok(await _ordsvc.EmptyCartAsync(userChatId));
+        public async Task<IActionResult> EmptyCurrentNewOrderAsync(long userChatId) =>
+            Ok(await _ordsvc.EmptyCurrentNewOrderAsync(userChatId));
+        #endregion create_order
 
-        [HttpGet("~/order/get/all/{userChatId:long}")]
-        public async Task<IActionResult> GetAllOrdersAsync(long userChatId) =>
-            Ok(await _ordsvc.GetUserOrdersAsync(userChatId));
+        #region show_cart
+        [HttpGet("~/cart/show/{userChatId:long}")]
+        public async Task<IActionResult> ShowCurrentNewOrderItemsAsync(long userChatId) =>
+            Ok(await _ordsvc.ShowCurrentNewOrderItemsAsync(userChatId));
+        #endregion show_cart
 
-        [HttpGet("~/order/get/byorderid/{orderId}")]
-        public async Task<IActionResult> GetOrderByIdAsync(string orderId) =>
-            Ok(await _ordsvc.GetOrderAsync(orderId));
-
-        [HttpGet("~/order/requestcheckout/{userChatId:long}")]
-        public async Task<IActionResult> GetOrderRequestCheckoutAsync(long userChatId) =>
+        #region checkout
+        [HttpGet("~/order/checkout/request/{userChatId:long}")]
+        public async Task<IActionResult> RequestCheckoutAsync(long userChatId) =>
             Ok(await _ordsvc.RequestCheckoutAsync(userChatId));
-
-        [HttpGet("~/order/shipping/calculate/{userChatId:long}")]
+            
+        [HttpGet("~/order/checkout/shipping/options/{userChatId:long}")]
         public async Task<IActionResult> GetShippingOptionsAsync(long userChatId) =>
             Ok(await _ordsvc.GetShippingOptionsAsync(userChatId));
 
-        [HttpGet("~/order/setshippingcarrier/{userChatId:long}/{shippingCarrier}")]
-        public async Task<IActionResult> SetShippingCarrierAsync(long userChatId, string shippingCarrier) =>
-            Ok(await _ordsvc.SetShippingCarrierAsync(userChatId, shippingCarrier));
+        [HttpGet("~/order/checkout/shipping/set/{userChatId:long}/{carrier}")]
+        public async Task<IActionResult> SetShippingCarrierAsync(long userChatId, string carrier) =>
+            Ok(await _ordsvc.SetShippingCarrierAsync(userChatId, carrier));
 
-        [HttpGet("~/order/setpaymentmethod/{userChatId:long}/{paymentMethod}")]
-        public async Task<IActionResult> SetPaymentMethodAsync(long userChatId, string paymentMethod)
-        {
-            var url = await _ordsvc.SetPaymentMethodAsync(userChatId, paymentMethod);
-            if (string.IsNullOrEmpty(url))
-                return Ok(url);
-            return Ok(url);
-        }
+        [HttpGet("~/order/checkout/payment/set/{userChatId:long}/{method}")]
+        public async Task<IActionResult> SetPaymentMethodAsync(long userChatId, string method) =>
+            Ok(await _ordsvc.SetPaymentMethodAsync(userChatId, method));
+        #endregion checkout
 
-        // [HttpGet("~/order/hasaccount/{userChatId:long}")]
-        // public async Task<IActionResult> GetAccountLinkAsync(long userChatId)
-        // {
-        //     var link = await _ordsvc.GetAccountLinkAsync(userChatId);
-
-        //     if (link is null)
-        //         return Ok(string.Empty);
-            
-        //     return Ok(link);    
-        // }
+        #region webapp
+        [HttpGet("~/order/checkout/finalize")]
+        public async Task<IActionResult> FinalizeOrderAsync([FromBody] Order order) =>
+            Ok(await _ordsvc.FinalizeOrderAsync(order));
+        #endregion
     }
 }
