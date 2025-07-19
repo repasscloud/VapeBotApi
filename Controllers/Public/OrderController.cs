@@ -67,8 +67,8 @@ namespace VapeBotApi.Controllers.Public
 
         #region webapp
         [HttpGet("~/order/checkout/finalize")]
-        public async Task<IActionResult> FinalizeOrderAsync([FromBody] Order order) =>
-            Ok(await _ordsvc.FinalizeOrderAsync(order));
+        public async Task<IActionResult> FinalizeWebAppOrderAsync([FromBody] Order order) =>
+            Ok(await _ordsvc.FinalizeWebAppOrderAsync(order));
         #endregion
     }
 }

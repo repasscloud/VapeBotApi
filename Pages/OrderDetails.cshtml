@@ -1,10 +1,55 @@
-@* @page "/OrderDetails"
+@page "/OrderDetails"
 @using VapeBotApi.Models
 @model VapeBotApi.Pages.OrderDetailsModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
 @{
-    Layout = "_Layout";
+    Layout   = "_Layout";
     bool editable = Model.Order.Status == OrderStatus.New;
+}
+
+@if (Model.Order.Status != OrderStatus.New)
+{
+    <div class="alert alert-info">
+        @switch (Model.Order.Status)
+        {
+            case OrderStatus.PaymentPending
+                when Model.Order.PaymentMethod == OrderPaymentMethod.Stripe:
+                <p>
+                  Payment pending.  
+                  <a class="btn btn-primary" href="@Model.Order.StripePaymentUrl" target="_blank">
+                    Click here to pay
+                  </a>
+                </p>
+                break;
+
+            case OrderStatus.PaymentPending
+                when Model.Order.PaymentMethod == OrderPaymentMethod.PayID:
+                <p>
+                  Payment pending.  
+                  <a class="btn btn-primary" href="https://placeholder.url" target="_blank">
+                    Click here to pay
+                  </a>
+                </p>
+                break;
+
+            case OrderStatus.PaymentReceived:
+                <p>Payment received, order will ship shortly.</p>;
+                break;
+
+            case OrderStatus.Shipped:
+                <p>Order shipped, tracking number: @Model.Order.TrackingNumber</p>;
+                break;
+
+            case OrderStatus.Completed:
+                <p>Order complete.</p>;
+                break;
+
+            default:
+                <p>Status: @Model.Order.Status</p>;
+                break;
+        }
+    </div>
 }
 
 <!-- Order Summary Card -->
@@ -69,21 +114,17 @@
 <h2>Shipping Details</h2>
 <form method="post">
     <div class="row">
-        <div class="col-md-6">
-            <div class="mb-3">
-                <input type="hidden" asp-for="Order.OrderId" />
-                <input type="hidden" asp-for="Order.Status" />
-                <label asp-for="Order.FirstName" class="form-label">First Name</label>
-                <input asp-for="Order.FirstName" class="form-control" readonly="@(editable ? null : "readonly")" />
-                <span asp-validation-for="Order.FirstName" class="text-danger"></span>
-            </div>
+        <div class="col-md-6 mb-3">
+            <input type="hidden" asp-for="Order.OrderId" />
+            <input type="hidden" asp-for="Order.Status" />
+            <label asp-for="Order.FirstName" class="form-label">First Name</label>
+            <input asp-for="Order.FirstName" class="form-control" readonly="@(editable ? null : "readonly")" />
+            <span asp-validation-for="Order.FirstName" class="text-danger"></span>
         </div>
-        <div class="col-md-6">
-            <div class="mb-3">
-                <label asp-for="Order.SecondName" class="form-label">Last Name</label>
-                <input asp-for="Order.SecondName" class="form-control" readonly="@(editable ? null : "readonly")" />
-                <span asp-validation-for="Order.SecondName" class="text-danger"></span>
-            </div>
+        <div class="col-md-6 mb-3">
+            <label asp-for="Order.SecondName" class="form-label">Last Name</label>
+            <input asp-for="Order.SecondName" class="form-control" readonly="@(editable ? null : "readonly")" />
+            <span asp-validation-for="Order.SecondName" class="text-danger"></span>
         </div>
     </div>
 
@@ -94,7 +135,7 @@
     </div>
 
     <div class="mb-3">
-        <label asp-for="Order.AddressLine2" class="form-label">Address Line 1</label>
+        <label asp-for="Order.AddressLine2" class="form-label">Address Line 2</label>
         <input asp-for="Order.AddressLine2" class="form-control" readonly="@(editable ? null : "readonly")" />
     </div>
 
@@ -104,32 +145,28 @@
     </div>
 
     <div class="row">
-        <div class="col-md-4">
-            <div class="mb-3">
-                <label asp-for="Order.State" class="form-label">State</label>
-                <select asp-for="Order.State" asp-items="Model.States" class="form-select" disabled="@(editable ? null : "disabled")"></select>
-                <span asp-validation-for="Order.State" class="text-danger"></span>
-            </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="Order.State" class="form-label">State</label>
+            <select asp-for="Order.State" asp-items="Model.States" class="form-select" disabled="@(editable ? null : "disabled")"></select>
+            <span asp-validation-for="Order.State" class="text-danger"></span>
         </div>
-        <div class="col-md-4">
-            <div class="mb-3">
-                <label asp-for="Order.ZipCode" class="form-label">Post Code</label>
-                <input asp-for="Order.ZipCode" class="form-control" readonly="@(editable ? null : "readonly")" />
-                <span asp-validation-for="Order.ZipCode" class="text-danger"></span>
-            </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="Order.ZipCode" class="form-label">Post Code</label>
+            <input asp-for="Order.ZipCode" class="form-control" readonly="@(editable ? null : "readonly")" />
+            <span asp-validation-for="Order.ZipCode" class="text-danger"></span>
         </div>
-        <div class="col-md-4">
-            <div class="mb-3">
-                <label asp-for="Order.MobileNo" class="form-label">Mobile No.</label>
-                <input asp-for="Order.MobileNo" class="form-control" readonly="@(editable ? null : "readonly")" />
-                <span asp-validation-for="Order.MobileNo" class="text-danger"></span>
-            </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="Order.MobileNo" class="form-label">Mobile No.</label>
+            <input asp-for="Order.MobileNo" class="form-control" readonly="@(editable ? null : "readonly")" />
+            <span asp-validation-for="Order.MobileNo" class="text-danger"></span>
         </div>
     </div>
 
-    <button type="submit" class="btn btn-primary" disabled="@(editable ? null : "disabled")">Submit</button>
+    <button type="submit" class="btn btn-primary" disabled="@(editable ? null : "disabled")">
+      @((editable) ? "Submit" : "Close")
+    </button>
 </form>
 
 @section Scripts {
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-} *@
+}

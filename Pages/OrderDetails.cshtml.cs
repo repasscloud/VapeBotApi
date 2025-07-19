@@ -1,71 +1,78 @@
-// // Pages/OrderDetails.cshtml.cs
-// using System.Linq;
-// using System.Threading.Tasks;
-// using Microsoft.AspNetCore.Mvc;
-// using Microsoft.AspNetCore.Mvc.RazorPages;
-// using Microsoft.AspNetCore.Mvc.Rendering;
-// using VapeBotApi.Models;
-// using VapeBotApi.Services.Interfaces;
+using System;
+using System.IO;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using VapeBotApi.Models;
+using VapeBotApi.Services.Interfaces;
 
-// namespace VapeBotApi.Pages
-// {
-//     public class OrderDetailsModel : PageModel
-//     {
-//         private readonly IOrderService _ordsvc;
+namespace VapeBotApi.Pages
+{
+    public class OrderDetailsModel : PageModel
+    {
+        private readonly IOrderService _ordsvc;
 
-//         public OrderDetailsModel(IOrderService ordsvc)
-//             => _ordsvc = ordsvc;
+        public OrderDetailsModel(IOrderService ordsvc)
+            => _ordsvc = ordsvc;
 
-//         [BindProperty(SupportsGet = true)]
-//         public string Id { get; set; } = default!;
+        [BindProperty(SupportsGet = true)]
+        public string Id { get; set; } = default!;
 
-//         [BindProperty]
-//         public Order Order { get; set; } = default!;
+        [BindProperty]
+        public Order Order { get; set; } = default!;
 
-//         public IEnumerable<OrderItem> LineItems => Order.Items;
-//         public decimal ItemsTotal   => Order.SubTotal    ?? 0m;
-//         public decimal CarrierCost  => Order.ShippingFee ?? 0m;
-//         public decimal Tax          => Order.Tax         ?? 0m;
-//         public decimal Total        => Order.Total       ?? (ItemsTotal + CarrierCost + Tax);
+        public IEnumerable<OrderItem> LineItems => Order.Items;
+        public decimal ItemsTotal   => Order.SubTotal    ?? 0m;
+        public decimal CarrierCost  => Order.ShippingFee ?? 0m;
+        public decimal Tax          => Order.Tax         ?? 0m;
+        public decimal Total        => Order.Total       ?? (ItemsTotal + CarrierCost + Tax);
 
-//         public SelectList States { get; private set; } = default!;
+        public SelectList States { get; private set; } = default!;
 
-//         public async Task<IActionResult> OnGetAsync()
-//         {
-//             Order = await _ordsvc.GetOrderAsync(Id);
-//             PopulateStates();
-//             return Page();
-//         }
+        public async Task<IActionResult> OnGetAsync()
+        {
+            // Fetch into a local variable
+            var order = await _ordsvc.GetWebAppOrderAsync(Id);
 
-//         public async Task<IActionResult> OnPostAsync()
-//         {
-//             // no status‑check here: form is disabled client‑side when not editable
-//             var success = await _ordsvc.UpdateShippingDetailsAsync(Order);
-//             if (success)
-//                 return Content("<script>window.Telegram.WebApp.close();</script>", "text/html");
+            // If it's null, bail out immediately
+            if (order == null)
+                return Redirect("https://www.google.com.au/");
 
-//             // if we got here, re‑populate dropdown and redisplay
-//             PopulateStates();
-//             return Page();
-//         }
+            // Now we know it's non-null, so it's safe to assign
+            Order = order;
 
-//         private void PopulateStates()
-//         {
-//             // build a SelectList whose option values are the enum's numeric values
-//             var items = Enum.GetValues<AUState>()
-//                             .Cast<AUState>()
-//                             .Select(s => new SelectListItem
-//                             {
-//                                 Value = ((int)s).ToString(),
-//                                 Text  = s.ToString()
-//                             })
-//                             .ToList();
+            PopulateStates();
+            return Page();
+        }
 
-//             // if Order.State is null, fall back to NSW
-//             var state = Order.State ?? AUState.NSW;
-//             var selected = ((int)state).ToString();
+        public async Task<IActionResult> OnPostAsync()
+        {
+            // dump entire Order to JSON for debugging
+            var json = JsonSerializer.Serialize(Order, new JsonSerializerOptions { WriteIndented = true });
+            var debugPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "order_debug.json");
+            await System.IO.File.WriteAllTextAsync(debugPath, json);
 
-//             States = new SelectList(items, "Value", "Text", selected);
-//         }
-//     }
-// }
+            var success = await _ordsvc.FinalizeWebAppOrderAsync(Order);
+
+            // always redirect back into your WebApp test page
+            return Redirect("https://secure-endlessly-puma.ngrok-free.app/test-webapp.html");
+        }
+
+        private void PopulateStates()
+        {
+            var items = Enum.GetValues<AUState>()
+                            .Cast<AUState>()
+                            .Select(s => new SelectListItem
+                            {
+                                Value = ((int)s).ToString(),
+                                Text  = s.ToString()
+                            })
+                            .ToList();
+
+            var state = Order.State ?? AUState.NSW;
+            States = new SelectList(items, "Value", "Text", ((int)state).ToString());
+        }
+    }
+}

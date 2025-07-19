@@ -338,12 +338,25 @@ namespace VapeBotApi.Services
             order.LastUpdated = DateTime.UtcNow;
             await _db.SaveChangesAsync();
 
-            return "payment page link goes here";
+            return "https://secure-endlessly-puma.ngrok-free.app/test-webapp.html";
         }
         #endregion
 
         #region webapp
-        public async Task<string> FinalizeOrderAsync(Order update)
+        public async Task<Order?> GetWebAppOrderAsync(string orderId)
+        {
+            var order = await _db.Orders
+                .Include(o => o.Items)
+                .ThenInclude(i => i.Product)
+                .FirstOrDefaultAsync(o => o.OrderId == orderId);
+
+            if (order == null)
+                return null;
+
+            return order;
+        }
+
+        public async Task<string> FinalizeWebAppOrderAsync(Order update)
         {
             var order = await _db.Orders
                 .Include(o => o.Items)
@@ -373,8 +386,10 @@ namespace VapeBotApi.Services
                 default:
                     return "https://www.google.com.au/";
             }
-
         }
+
+        
+        
         #endregion
 
 

@@ -25,7 +25,8 @@ namespace VapeBotApi.Services.Interfaces
         Task<string?> SetPaymentMethodAsync(long chatId, string paymentMethod);
 
         // webapp
-        Task<string> FinalizeOrderAsync(Order order);
+        Task<Order?> GetWebAppOrderAsync(string orderId);
+        Task<string> FinalizeWebAppOrderAsync(Order order);
 
         // bot
         // Task<string> CreateOrderGetIdAsync(long chatId);

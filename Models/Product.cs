@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using NanoidDotNet;
-
 namespace VapeBotApi.Models
 {
     public class Product
