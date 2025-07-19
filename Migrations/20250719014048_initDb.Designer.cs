@@ -12,7 +12,7 @@ using VapeBotApi.Data;
 namespace VapeBotApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250717142942_initDb")]
+    [Migration("20250719014048_initDb")]
     partial class initDb
     {
         /// <inheritdoc />

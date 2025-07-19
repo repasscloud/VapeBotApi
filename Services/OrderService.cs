@@ -39,6 +39,8 @@ namespace VapeBotApi.Services
             else
             {
                 var order = new Order { UserChatId = chatId };
+                await _db.Orders.AddAsync(order);
+                await _db.SaveChangesAsync();
                 return order.OrderId;
             }
         }
