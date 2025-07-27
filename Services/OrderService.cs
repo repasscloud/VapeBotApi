@@ -430,6 +430,7 @@ namespace VapeBotApi.Services
                     }
                     break;
                 case OrderPaymentMethod.Crypto:
+                    // sets redirect URL immediately
                     redirectUrl = await _pay.GetNowPaymentsIOPaymentLinkAsync(order.OrderId);
                     break;
                 default:

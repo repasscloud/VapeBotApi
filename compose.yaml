@@ -39,6 +39,13 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - Telegram__BotToken=${TELEGRAM__BOTTOKEN}
       - ConnectionStrings__DefaultConnection=${CONNECTIONSTRINGS__DEFAULTCONNECTION}
+      - PayPal__ClientID=${PAYPAL__CLIENTID}
+      - PayPal__Secret=${PAYPAL__SECRET}
+      - NowPaymentsIO__SecretKey=${NOWPAYMENTSIO__SECRETKEY}
+      - NowPaymentsIO__IpnKey=${NOWPAYMENTSIO__IPNKEY}
+      - Stripe__SecretKey=${STRIPE__SECRETKEY}
+      - Stripe__PublishableKey=${STRIPE__PUBLISHABLEKEY}
+      - Stripe__SigningSecret=${STRIPE__SigningSecret}
     ports:
       - "5158:8080"
     depends_on:

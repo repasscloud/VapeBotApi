@@ -267,7 +267,7 @@ namespace VapeBotApi.Services
                 price_currency = order.Currency.ToLower(),
                 order_id = order.OrderId,
                 order_description = $"Order: {order.OrderId}",
-                ipn_callback_url = $"{WebAppBase.Url}/api/Payments/nowpayments/ipn",
+                ipn_callback_url = $"{WebAppBase.Url}/api/nowpaymentsio/ipn",
                 success_url = WebAppBase.PaymentSuccessUrl,
                 cancel_url = WebAppBase.PaymentFailedUrl,
                 partially_paid_url = WebAppBase.PaymentFailedUrl,
