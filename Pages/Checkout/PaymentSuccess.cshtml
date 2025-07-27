@@ -1,0 +1,70 @@
+@page "/payment-success"
+@model VapeBotApi.Pages.Checkout.PaymentSuccessModel
+@{
+    Layout = null; // No layout for standalone view
+    ViewData["Title"] = "Payment Successful";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment Successful</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        html { font-size: 100%; }
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            padding: 2rem;
+            background-color: #ffffff;
+            font-size: 1.25rem;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+        }
+
+        button {
+            padding: 1rem 1.5rem;
+            font-size: 1.25rem;
+            border: none;
+            border-radius: 0.5rem;
+            background-color: #0088cc;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:active {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <h1>Payment Successful</h1>
+    <p>You can check the status of your order via the <b>☰ Menu</b> in Telegram and selecting <code>/order_status</code></p>
+    <p>Tap the button below to close the WebApp.</p>
+    <button id="close-btn">🔒 Close WebApp</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tg = window.Telegram.WebApp;
+            tg.ready();
+            tg.expand?.();
+
+            document
+                .getElementById('close-btn')
+                .addEventListener('click', () => tg.close());
+        });
+    </script>
+</body>
+</html>

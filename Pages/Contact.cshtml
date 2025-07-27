@@ -1,0 +1,32 @@
+@page "/contact"
+@model VapeBotApi.Pages.ContactModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Contact Support";
+}
+
+<div class="card mb-4 shadow-sm mt-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Contact Support</h5>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            <input type="hidden" asp-for="MessageModel.ChatId" />
+            <input type="hidden" asp-for="MessageModel.Created" />
+
+            <dl class="row mb-4">
+                <dt class="col-sm-4">Chat ID</dt>
+                <dd class="col-sm-8"><code>@Model.MessageModel.ChatId</code></dd>
+            </dl>
+
+            <div class="mb-3">
+                <label asp-for="MessageModel.Message" class="form-label">Your Message</label>
+                <textarea asp-for="MessageModel.Message" class="form-control" rows="5" autofocus></textarea>
+                <span asp-validation-for="MessageModel.Message" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">📨 Send Message</button>
+        </form>
+    </div>
+</div>

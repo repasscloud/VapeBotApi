@@ -1,0 +1,1074 @@
+{
+  "currencies": [
+    {
+      "min_amount": 29.5541269,
+      "max_amount": 5484.913247057098,
+      "currency": "sfund"
+    },
+    {
+      "min_amount": 17.7616499,
+      "max_amount": 19548.65275,
+      "currency": "usdcbase"
+    },
+    {
+      "min_amount": 18.3978501,
+      "max_amount": 11237.491046,
+      "currency": "usdcop"
+    },
+    {
+      "min_amount": 1385.3915591,
+      "max_amount": 180353.33278006,
+      "currency": "fun"
+    },
+    {
+      "min_amount": 1053.4921676,
+      "max_amount": 1286003.791446924,
+      "currency": "jasmy"
+    },
+    {
+      "min_amount": 2388.3335541,
+      "max_amount": 221580.0610839576,
+      "currency": "trvl"
+    },
+    {
+      "min_amount": 62.5611315,
+      "max_amount": 3931.03215705224,
+      "currency": "belbsc"
+    },
+    {
+      "min_amount": 1.7039694,
+      "max_amount": 524.7390644330845,
+      "currency": "uni"
+    },
+    {
+      "min_amount": 364.2802507,
+      "max_amount": 23141.07632565037,
+      "currency": "sysevm"
+    },
+    {
+      "min_amount": 12.843077,
+      "max_amount": 795.07248322,
+      "currency": "tet"
+    },
+    {
+      "min_amount": 0.9616877,
+      "max_amount": 3154.647675711299,
+      "currency": "link"
+    },
+    {
+      "min_amount": 7178.3792103,
+      "max_amount": 576708.1388577606,
+      "currency": "dino"
+    },
+    {
+      "min_amount": 17.7415046,
+      "max_amount": 1125.723982,
+      "currency": "maticusdce"
+    },
+    {
+      "min_amount": 140827.2668068,
+      "max_amount": 17101428.207565755,
+      "currency": "flokibsc"
+    },
+    {
+      "min_amount": 1677.3790249,
+      "max_amount": 103965.7535550065,
+      "currency": "xyo"
+    },
+    {
+      "min_amount": 17.7746698,
+      "max_amount": 112325.62427,
+      "currency": "usdcmatic"
+    },
+    {
+      "min_amount": 200504.8692471,
+      "max_amount": 11166906.758407593,
+      "currency": "fluf"
+    },
+    {
+      "min_amount": 0.0001587,
+      "max_amount": 1.42505822,
+      "currency": "btc"
+    },
+    {
+      "min_amount": 45576.1148518,
+      "max_amount": 2469533.401859273,
+      "currency": "tenshi"
+    },
+    {
+      "min_amount": 451.871027,
+      "max_amount": 40110.66487828,
+      "currency": "tfuel"
+    },
+    {
+      "min_amount": 16635.8066064,
+      "max_amount": 1334241.78090534,
+      "currency": "atlas"
+    },
+    {
+      "min_amount": 1.0872075,
+      "max_amount": 133.76633124864574,
+      "currency": "egldbsc"
+    },
+    {
+      "min_amount": 4686.15,
+      "max_amount": 594105,
+      "currency": "snek"
+    },
+    {
+      "min_amount": 305.9708685,
+      "max_amount": 19431.248799361154,
+      "currency": "brettbase"
+    },
+    {
+      "min_amount": 94.9399282,
+      "max_amount": 5848.110976509108,
+      "currency": "idbsc"
+    },
+    {
+      "min_amount": 307.9494148,
+      "max_amount": 63720.81006926,
+      "currency": "c98"
+    },
+    {
+      "min_amount": 61.8003349,
+      "max_amount": 234482.12295532,
+      "currency": "hbar"
+    },
+    {
+      "min_amount": 17.9923201,
+      "max_amount": 42894.424427,
+      "currency": "usdtton"
+    },
+    {
+      "min_amount": 1.1585824,
+      "max_amount": 73.57998425098666,
+      "currency": "injmainnet"
+    },
+    {
+      "min_amount": 338180.2565852,
+      "max_amount": 19932368.336784,
+      "currency": "wintrc20"
+    },
+    {
+      "min_amount": 0.7809323,
+      "max_amount": 359.77190415,
+      "currency": "dash"
+    },
+    {
+      "min_amount": 4.2680673,
+      "max_amount": 4471.9959466872,
+      "currency": "dot"
+    },
+    {
+      "min_amount": 4957.891218,
+      "max_amount": 306303.1358,
+      "currency": "mew"
+    },
+    {
+      "min_amount": 1451259.1234402,
+      "max_amount": 4441716169.973023,
+      "currency": "pepe"
+    },
+    {
+      "min_amount": 18.3535968,
+      "max_amount": 1128.358884,
+      "currency": "usdr"
+    },
+    {
+      "min_amount": 17.7675614,
+      "max_amount": 134735.86326,
+      "currency": "usdtmatic"
+    },
+    {
+      "min_amount": 18.4299195,
+      "max_amount": 27288.15873878567,
+      "currency": "usdcbsc"
+    },
+    {
+      "min_amount": 22.1543434,
+      "max_amount": 5326.88573879,
+      "currency": "super"
+    },
+    {
+      "min_amount": 74.1360815,
+      "max_amount": 121906.29231227,
+      "currency": "maticmainnet"
+    },
+    {
+      "min_amount": 18.2657748,
+      "max_amount": 27580.04424,
+      "currency": "usdcsol"
+    },
+    {
+      "min_amount": 1940743942.3132584,
+      "max_amount": 118062384803.50984,
+      "currency": "bad"
+    },
+    {
+      "min_amount": 27350126.8047667,
+      "max_amount": 16524178333.122143,
+      "currency": "bttc"
+    },
+    {
+      "min_amount": 136.9184377,
+      "max_amount": 8492.03054392,
+      "currency": "dao"
+    },
+    {
+      "min_amount": 8833.8469922,
+      "max_amount": 545742.082651412,
+      "currency": "gari"
+    },
+    {
+      "min_amount": 740.2951852,
+      "max_amount": 91603.45422726,
+      "currency": "nwc"
+    },
+    {
+      "min_amount": 0.070393,
+      "max_amount": 86.438056584754,
+      "currency": "xmr"
+    },
+    {
+      "min_amount": 18.2662557,
+      "max_amount": 1128.530682,
+      "currency": "usdssol"
+    },
+    {
+      "min_amount": 177.6694936,
+      "max_amount": 36074.89910671,
+      "currency": "chr"
+    },
+    {
+      "min_amount": 18.4016291,
+      "max_amount": 112281.267702,
+      "currency": "usdterc20"
+    },
+    {
+      "min_amount": 52.1277424,
+      "max_amount": 23048.574827,
+      "currency": "sei"
+    },
+    {
+      "min_amount": 6.1183703,
+      "max_amount": 385.68835494,
+      "currency": "near"
+    },
+    {
+      "min_amount": 21522.8493923,
+      "max_amount": 1618275.105373951,
+      "currency": "hmstr"
+    },
+    {
+      "min_amount": 1.1956681,
+      "max_amount": 146.87792485333176,
+      "currency": "inj"
+    },
+    {
+      "min_amount": 120.2940834,
+      "max_amount": 7489.499825228508,
+      "currency": "icx"
+    },
+    {
+      "min_amount": 1834.7185493,
+      "max_amount": 2159062.46879548,
+      "currency": "dgb"
+    },
+    {
+      "min_amount": 8484.7775372,
+      "max_amount": 14460543.885803549,
+      "currency": "not"
+    },
+    {
+      "min_amount": 942.4449486,
+      "max_amount": 110990.59309839286,
+      "currency": "sun"
+    },
+    {
+      "min_amount": 0.0050254,
+      "max_amount": 7.655030288432359,
+      "currency": "ethbsc"
+    },
+    {
+      "min_amount": 17.8045907,
+      "max_amount": 5385.041936,
+      "currency": "usdcarc20"
+    },
+    {
+      "min_amount": 75.9490433,
+      "max_amount": 4136.712591005736,
+      "currency": "matic"
+    },
+    {
+      "min_amount": 0.030034,
+      "max_amount": 139.52864584,
+      "currency": "bch"
+    },
+    {
+      "min_amount": 0.0222891,
+      "max_amount": 211.00929653,
+      "currency": "bnbbsc"
+    },
+    {
+      "min_amount": 19.5366364,
+      "max_amount": 61733.51793345684,
+      "currency": "theta"
+    },
+    {
+      "min_amount": 3602.3628827,
+      "max_amount": 221898.033191,
+      "currency": "rjvbsc"
+    },
+    {
+      "min_amount": 25259.5587745,
+      "max_amount": 1527147.9749914624,
+      "currency": "hotcross"
+    },
+    {
+      "min_amount": 0.4252418,
+      "max_amount": 795.56220719,
+      "currency": "zec"
+    },
+    {
+      "min_amount": 17.8774271,
+      "max_amount": 16987.843842,
+      "currency": "usdcarb"
+    },
+    {
+      "min_amount": 9.2036721,
+      "max_amount": 2254.9701926411612,
+      "currency": "zroerc20"
+    },
+    {
+      "min_amount": 0.0800076,
+      "max_amount": 4.950550868117378,
+      "currency": "bifierc20"
+    },
+    {
+      "min_amount": 17.7759618,
+      "max_amount": 1127.2291178311793,
+      "currency": "daiarb"
+    },
+    {
+      "min_amount": 20.2320184,
+      "max_amount": 3375.35296,
+      "currency": "usdtop"
+    },
+    {
+      "min_amount": 5.4007702,
+      "max_amount": 5899.965004196,
+      "currency": "ton"
+    },
+    {
+      "min_amount": 19.2554859,
+      "max_amount": 1132.0735327746615,
+      "currency": "tusdtrc20"
+    },
+    {
+      "min_amount": 23.0908839,
+      "max_amount": 168423.433459,
+      "currency": "usdttrc20"
+    },
+    {
+      "min_amount": 196.6582242,
+      "max_amount": 124446.10812972582,
+      "currency": "xdc"
+    },
+    {
+      "min_amount": 92.9974072,
+      "max_amount": 7570.270614236,
+      "currency": "jetton"
+    },
+    {
+      "min_amount": 18.7105326,
+      "max_amount": 89406.40719608,
+      "currency": "busdbsc"
+    },
+    {
+      "min_amount": 56.6419152,
+      "max_amount": 8038.568241458136,
+      "currency": "mana"
+    },
+    {
+      "min_amount": 0.0001492,
+      "max_amount": 0.00475524,
+      "currency": "wbtcmatic"
+    },
+    {
+      "min_amount": 1.7941056,
+      "max_amount": 1655.920323,
+      "currency": "trump"
+    },
+    {
+      "min_amount": 5.5599747,
+      "max_amount": 35037.436676,
+      "currency": "xrp"
+    },
+    {
+      "min_amount": 119407.5761747,
+      "max_amount": 9720533.872716168,
+      "currency": "dogs"
+    },
+    {
+      "min_amount": 0.3778872,
+      "max_amount": 76.71060395,
+      "currency": "okb"
+    },
+    {
+      "min_amount": 6.9435179,
+      "max_amount": 8551.652701472292,
+      "currency": "axs"
+    },
+    {
+      "min_amount": 0.0032309,
+      "max_amount": 3.97829240919472,
+      "currency": "yfi"
+    },
+    {
+      "min_amount": 0.004671,
+      "max_amount": 1.2670416468713408,
+      "currency": "etharb"
+    },
+    {
+      "min_amount": 55.2126309,
+      "max_amount": 522877.087575,
+      "currency": "trx"
+    },
+    {
+      "min_amount": 0.0046543,
+      "max_amount": 2.944715835751697,
+      "currency": "ethbase"
+    },
+    {
+      "min_amount": 57.4547433,
+      "max_amount": 14528.988740927263,
+      "currency": "sand"
+    },
+    {
+      "min_amount": 129.6851935,
+      "max_amount": 208023.13938893,
+      "currency": "cro"
+    },
+    {
+      "min_amount": 765960.258,
+      "max_amount": 48655497.52,
+      "currency": "xec"
+    },
+    {
+      "min_amount": 18.4207937,
+      "max_amount": 112326.208858,
+      "currency": "usdc"
+    },
+    {
+      "min_amount": 29.3386671,
+      "max_amount": 3616.315972401695,
+      "currency": "ava2erc20"
+    },
+    {
+      "min_amount": 0.5951063,
+      "max_amount": 47.66576095199345,
+      "currency": "banana"
+    },
+    {
+      "min_amount": 8.9172418,
+      "max_amount": 1128.5011827508622,
+      "currency": "zroarb"
+    },
+    {
+      "min_amount": 170.1158765,
+      "max_amount": 209649.56359316,
+      "currency": "grt"
+    },
+    {
+      "min_amount": 402251385.4989952,
+      "max_amount": 97719564906.6169,
+      "currency": "peipei"
+    },
+    {
+      "min_amount": 7667.5570526,
+      "max_amount": 3785395.29699799,
+      "currency": "hex"
+    },
+    {
+      "min_amount": 17.7006774,
+      "max_amount": 4528.117915443327,
+      "currency": "nano"
+    },
+    {
+      "min_amount": 426.7987576,
+      "max_amount": 26498.80376846227,
+      "currency": "aitech"
+    },
+    {
+      "min_amount": 21.6932604,
+      "max_amount": 13727.304452,
+      "currency": "stx"
+    },
+    {
+      "min_amount": 6.4974676,
+      "max_amount": 5325.71971205,
+      "currency": "cake"
+    },
+    {
+      "min_amount": 7.5863257,
+      "max_amount": 1104.22484192,
+      "currency": "qtum"
+    },
+    {
+      "min_amount": 18.4371744,
+      "max_amount": 11231.803793224322,
+      "currency": "dai"
+    },
+    {
+      "min_amount": 4.4037767,
+      "max_amount": 2654.03919152,
+      "currency": "sui"
+    },
+    {
+      "min_amount": 62.9923791,
+      "max_amount": 111580.838638,
+      "currency": "algo"
+    },
+    {
+      "min_amount": 128.3670832,
+      "max_amount": 26103.45480499,
+      "currency": "ponke"
+    },
+    {
+      "min_amount": 86.0663493,
+      "max_amount": 5464.13374588,
+      "currency": "sxpmainnet"
+    },
+    {
+      "min_amount": 113.5130277,
+      "max_amount": 22145.56847275,
+      "currency": "pivx"
+    },
+    {
+      "min_amount": 15.5832459,
+      "max_amount": 1628.60344253,
+      "currency": "waves"
+    },
+    {
+      "min_amount": 1366403.5885863,
+      "max_amount": 391327733.2656291,
+      "currency": "shibbsc"
+    },
+    {
+      "min_amount": 0.7073292,
+      "max_amount": 2236.070227693508,
+      "currency": "avaxc"
+    },
+    {
+      "min_amount": 7.8744716,
+      "max_amount": 500.23097820329343,
+      "currency": "bera"
+    },
+    {
+      "min_amount": 1098.4870992,
+      "max_amount": 1389947.27401056,
+      "currency": "rvn"
+    },
+    {
+      "min_amount": 0.0982348,
+      "max_amount": 7.040427976131575,
+      "currency": "leash"
+    },
+    {
+      "min_amount": 277925.6576429,
+      "max_amount": 22126659.203419425,
+      "currency": "wolferc20"
+    },
+    {
+      "min_amount": 293203.2737948,
+      "max_amount": 18142045.26460642,
+      "currency": "raca"
+    },
+    {
+      "min_amount": 18.2584742,
+      "max_amount": 27108.681258,
+      "currency": "usdtsol"
+    },
+    {
+      "min_amount": 0.7177206,
+      "max_amount": 447.54328733,
+      "currency": "avax"
+    },
+    {
+      "min_amount": 3.7987257,
+      "max_amount": 6075.761353,
+      "currency": "atom"
+    },
+    {
+      "min_amount": 683.4016722,
+      "max_amount": 1819990.9030984908,
+      "currency": "vet"
+    },
+    {
+      "min_amount": 20645588.7165172,
+      "max_amount": 1237157092.2543771,
+      "currency": "kibabsc"
+    },
+    {
+      "min_amount": 1470.8304221,
+      "max_amount": 930717.9008185129,
+      "currency": "one"
+    },
+    {
+      "min_amount": 19.0796397,
+      "max_amount": 3369.8412084878523,
+      "currency": "usddtrc20"
+    },
+    {
+      "min_amount": 736.6457863,
+      "max_amount": 149193.8448872662,
+      "currency": "arpa"
+    },
+    {
+      "min_amount": 17.4249309,
+      "max_amount": 1025.9751967215539,
+      "currency": "usdj"
+    },
+    {
+      "min_amount": 25744.5509922,
+      "max_amount": 1583548.0991724166,
+      "currency": "siduserc20"
+    },
+    {
+      "min_amount": 719.8463395,
+      "max_amount": 45344.93157691169,
+      "currency": "arpabsc"
+    },
+    {
+      "min_amount": 111.0011274,
+      "max_amount": 6735.031021152869,
+      "currency": "bat"
+    },
+    {
+      "min_amount": 0.1566969,
+      "max_amount": 989.21215834,
+      "currency": "ltc"
+    },
+    {
+      "min_amount": 841.2104504,
+      "max_amount": 507196.058672125,
+      "currency": "myro"
+    },
+    {
+      "min_amount": 117160.0200488,
+      "max_amount": 7257812.654228659,
+      "currency": "avn"
+    },
+    {
+      "min_amount": 18.3473817,
+      "max_amount": 3157.891737642333,
+      "currency": "tusd"
+    },
+    {
+      "min_amount": 279635.4060402,
+      "max_amount": 283497467.286047,
+      "currency": "lunc"
+    },
+    {
+      "min_amount": 1.0620804,
+      "max_amount": 873.58895532,
+      "currency": "egld"
+    },
+    {
+      "min_amount": 17.7512097,
+      "max_amount": 1127.591495,
+      "currency": "usdtcelo"
+    },
+    {
+      "min_amount": 0.0048739,
+      "max_amount": 1.1788455927015684,
+      "currency": "zksync"
+    },
+    {
+      "min_amount": 174.0617586,
+      "max_amount": 10893.00763758,
+      "currency": "kas"
+    },
+    {
+      "min_amount": 98.6024449,
+      "max_amount": 6101.996070206341,
+      "currency": "omg"
+    },
+    {
+      "min_amount": 63.0366091,
+      "max_amount": 11669.514494114264,
+      "currency": "1inch"
+    },
+    {
+      "min_amount": 18.5212939,
+      "max_amount": 1130.8111084896561,
+      "currency": "fdusdbsc"
+    },
+    {
+      "min_amount": 1481.3285445,
+      "max_amount": 94095.7926,
+      "currency": "cspr"
+    },
+    {
+      "min_amount": 148.0761894,
+      "max_amount": 9083.497667166,
+      "currency": "neiroerc20"
+    },
+    {
+      "min_amount": 139379.6546983,
+      "max_amount": 17100118.463277128,
+      "currency": "floki"
+    },
+    {
+      "min_amount": 396215782.0498165,
+      "max_amount": 49206737450.05088,
+      "currency": "brise"
+    },
+    {
+      "min_amount": 18.3068938,
+      "max_amount": 2476.142285409634,
+      "currency": "usdp"
+    },
+    {
+      "min_amount": 425.6149726,
+      "max_amount": 33981.546524287456,
+      "currency": "lnq"
+    },
+    {
+      "min_amount": 2435700.740364,
+      "max_amount": 1005013580.620615,
+      "currency": "arv"
+    },
+    {
+      "min_amount": 45782.1153178,
+      "max_amount": 2841050.2993928907,
+      "currency": "nftb"
+    },
+    {
+      "min_amount": 0.00479,
+      "max_amount": 0.2962480507811313,
+      "currency": "geth"
+    },
+    {
+      "min_amount": 646.3156812,
+      "max_amount": 51835.944251,
+      "currency": "daddy"
+    },
+    {
+      "min_amount": 828.443391,
+      "max_amount": 51042.43140185497,
+      "currency": "marsh"
+    },
+    {
+      "min_amount": 94.9091442,
+      "max_amount": 5848.083124295107,
+      "currency": "id"
+    },
+    {
+      "min_amount": 0.0951828,
+      "max_amount": 298.921312895,
+      "currency": "sol"
+    },
+    {
+      "min_amount": 80.2166542,
+      "max_amount": 94199.28768474,
+      "currency": "doge"
+    },
+    {
+      "min_amount": 115.700757,
+      "max_amount": 7349.96654793,
+      "currency": "ont"
+    },
+    {
+      "min_amount": 40.3497662,
+      "max_amount": 66335.2489161,
+      "currency": "xlm"
+    },
+    {
+      "min_amount": 296841.3569431,
+      "max_amount": 24164259.19237555,
+      "currency": "x"
+    },
+    {
+      "min_amount": 18.1929131,
+      "max_amount": 112281.0788647255,
+      "currency": "usdtbsc"
+    },
+    {
+      "min_amount": 22.1528129,
+      "max_amount": 41190.896687,
+      "currency": "ada"
+    },
+    {
+      "min_amount": 11654090.617427,
+      "max_amount": 2129046955.527173,
+      "currency": "mog"
+    },
+    {
+      "min_amount": 10547.3272323,
+      "max_amount": 669540.1736616137,
+      "currency": "fitfi"
+    },
+    {
+      "min_amount": 18.3350913,
+      "max_amount": 1130.235698369115,
+      "currency": "fdusderc20"
+    },
+    {
+      "min_amount": 17.757558,
+      "max_amount": 11236.911734,
+      "currency": "usdcalgo"
+    },
+    {
+      "min_amount": 0.777403,
+      "max_amount": 1375.5947119950713,
+      "currency": "etc"
+    },
+    {
+      "min_amount": 1.0187075,
+      "max_amount": 193.52796929,
+      "currency": "dcr"
+    },
+    {
+      "min_amount": 18.379578,
+      "max_amount": 1127.502183,
+      "currency": "opusdce"
+    },
+    {
+      "min_amount": 1734.054567,
+      "max_amount": 138684.04306473516,
+      "currency": "cswap"
+    },
+    {
+      "min_amount": 0.0048493,
+      "max_amount": 2.1195678777229103,
+      "currency": "ethlna"
+    },
+    {
+      "min_amount": 0.0054653,
+      "max_amount": 0.336833,
+      "currency": "xaut"
+    },
+    {
+      "min_amount": 106.9192573,
+      "max_amount": 6589.146270879843,
+      "currency": "tko"
+    },
+    {
+      "min_amount": 1306590.7988639,
+      "max_amount": 2393583582.1956434,
+      "currency": "shib"
+    },
+    {
+      "min_amount": 1.0183937,
+      "max_amount": 207.40022853041103,
+      "currency": "gt"
+    },
+    {
+      "min_amount": 1.2193852,
+      "max_amount": 277.9544833180897,
+      "currency": "ilv"
+    },
+    {
+      "min_amount": 6.7836073,
+      "max_amount": 8764.243594090434,
+      "currency": "fil"
+    },
+    {
+      "min_amount": 8.3111853,
+      "max_amount": 1685.16271814,
+      "currency": "mx"
+    },
+    {
+      "min_amount": 245.8161626,
+      "max_amount": 15214.5715684,
+      "currency": "ctsi"
+    },
+    {
+      "min_amount": 18.2517216,
+      "max_amount": 1127.493545,
+      "currency": "pyusd"
+    },
+    {
+      "min_amount": 29.4739498,
+      "max_amount": 18047.68043768689,
+      "currency": "ava2bsc"
+    },
+    {
+      "min_amount": 2424.2958498,
+      "max_amount": 7358990.05018132,
+      "currency": "xvg"
+    },
+    {
+      "min_amount": 41.5868143,
+      "max_amount": 9471.8938488046,
+      "currency": "knc"
+    },
+    {
+      "min_amount": 63.8858395,
+      "max_amount": 12933.429920343255,
+      "currency": "bel"
+    },
+    {
+      "min_amount": 25585894.2052152,
+      "max_amount": 3214001584.630237,
+      "currency": "bttcbsc"
+    },
+    {
+      "min_amount": 42.8410969,
+      "max_amount": 18762.64130115,
+      "currency": "now"
+    },
+    {
+      "min_amount": 173.5346898,
+      "max_amount": 10897.99919251252,
+      "currency": "cgptbsc"
+    },
+    {
+      "min_amount": 503.1059524,
+      "max_amount": 90308.12594321533,
+      "currency": "jst"
+    },
+    {
+      "min_amount": 19.9074582,
+      "max_amount": 1239.12787,
+      "currency": "xtz"
+    },
+    {
+      "min_amount": 202.1552366,
+      "max_amount": 12672.0133381,
+      "currency": "cati"
+    },
+    {
+      "min_amount": 17.790023,
+      "max_amount": 5394.108767,
+      "currency": "usdtarc20"
+    },
+    {
+      "min_amount": 753.8638384,
+      "max_amount": 157552.51071689135,
+      "currency": "iotx"
+    },
+    {
+      "min_amount": 242310.4718494,
+      "max_amount": 14956243.26252967,
+      "currency": "verse"
+    },
+    {
+      "min_amount": 14222891253.864437,
+      "max_amount": 941176160225.7651,
+      "currency": "babydoge"
+    },
+    {
+      "min_amount": 1163.3582815,
+      "max_amount": 68175.16919358821,
+      "currency": "velo"
+    },
+    {
+      "min_amount": 0.0612912,
+      "max_amount": 75.33976772,
+      "currency": "aave"
+    },
+    {
+      "min_amount": 96.2101089,
+      "max_amount": 6057.956982170429,
+      "currency": "cfx"
+    },
+    {
+      "min_amount": 39.1306167,
+      "max_amount": 24654.27359021155,
+      "currency": "arb"
+    },
+    {
+      "min_amount": 299.8738632,
+      "max_amount": 369403.5229546295,
+      "currency": "coti"
+    },
+    {
+      "min_amount": 8132.4511776,
+      "max_amount": 1576083.51105907,
+      "currency": "klv"
+    },
+    {
+      "min_amount": 169.3728243,
+      "max_amount": 10271.62585811,
+      "currency": "cvc"
+    },
+    {
+      "min_amount": 17.8702325,
+      "max_amount": 27276.74376,
+      "currency": "usdtarb"
+    },
+    {
+      "min_amount": 7541.3387416,
+      "max_amount": 478871.238572,
+      "currency": "klvmainnet"
+    },
+    {
+      "min_amount": 1.3100122,
+      "max_amount": 413.7452436175913,
+      "currency": "gmx"
+    },
+    {
+      "min_amount": 290.6242657,
+      "max_amount": 16828.402297743833,
+      "currency": "tlos"
+    },
+    {
+      "min_amount": 91.7717996,
+      "max_amount": 5671.912896736737,
+      "currency": "bone"
+    },
+    {
+      "min_amount": 16827.7639675,
+      "max_amount": 2181280.2908421806,
+      "currency": "hot"
+    },
+    {
+      "min_amount": 18.2805,
+      "max_amount": 3707.43,
+      "currency": "gusd"
+    },
+    {
+      "min_amount": 422.699641,
+      "max_amount": 25619.7650779168,
+      "currency": "chz"
+    },
+    {
+      "min_amount": 28.2566217,
+      "max_amount": 7842.569899266573,
+      "currency": "ape"
+    },
+    {
+      "min_amount": 1017.3686304,
+      "max_amount": 1218948.25082208,
+      "currency": "galaerc20"
+    },
+    {
+      "min_amount": 1.1878203,
+      "max_amount": 73.60005175650039,
+      "currency": "injerc20"
+    },
+    {
+      "min_amount": 0.0046957,
+      "max_amount": 29.437562928857027,
+      "currency": "eth"
+    },
+    {
+      "min_amount": 18.2171482,
+      "max_amount": 1127.124545124359,
+      "currency": "usde"
+    },
+    {
+      "min_amount": 40482121.323892,
+      "max_amount": 5080849805.183166,
+      "currency": "cns"
+    },
+    {
+      "min_amount": 52.864864,
+      "max_amount": 65881.99960798667,
+      "currency": "s"
+    }
+  ]
+}

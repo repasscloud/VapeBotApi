@@ -1,0 +1,138 @@
+@page "/OrderView/{id}"
+@model VapeBotApi.Pages.OrderViewModel
+@using VapeBotApi.Models
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "_Layout";
+}
+
+<!-- Order Summary Card -->
+<div class="card mb-4 shadow-sm mt-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Order Summary</h5>
+    </div>
+    <div class="card-body">
+        <dl class="row mb-4">
+            <dt class="col-sm-4">Order ID</dt>
+            <dd class="col-sm-8"><code>@Model.Order.OrderId</code></dd>
+
+            <dt class="col-sm-4">Status</dt>
+            <dd class="col-sm-8">
+                @switch (Model.Order.Status)
+                {
+                    //100
+                    case OrderStatus.New:
+                        @:🆕 New Order
+                        break;
+                    //200
+                    case OrderStatus.PaymentPending:
+                        @:<span class="text-warning">⏳ Payment Pending</span>
+                        break;
+                    //200
+                    case OrderStatus.PaymentReceived:
+                        @:<span class="text-success">💰 Payment Received</span>
+                        break;
+                    //215
+                    case OrderStatus.PaymentFailed:
+                        @:<span class="text-danger">❌ Payment Failed</span>
+                        break;
+                    //300
+                    case OrderStatus.Packing:
+                        @:📦 Packing for Shipping
+                        break;
+                    //310
+                    case OrderStatus.PendingShipment:
+                        @:🚚 Pending Shipping
+                        break;
+                    //320
+                    case OrderStatus.Shipped:
+                        @:<span class="text-primary">📤 Shipped</span>
+                        break;
+                    //900
+                    case OrderStatus.Completed:
+                        @:<span class="text-success">✅ Completed</span>
+                        break;
+                    //910
+                    case OrderStatus.Cancelled:
+                        @:<span class="text-danger">🚫 Cancelled</span>
+                        break;
+                    //920
+                    case OrderStatus.Refunded:
+                        @:<span class="text-info">💸 Refunded</span>
+                        break;
+                    //930
+                    case OrderStatus.PartiallyRefunded:
+                        @:<span class="text-info">💵 Partially Refunded</span>
+                        break;
+
+                    default:
+                        @:<span class="text-muted">❓ Unknown</span>
+                        break;
+                }
+            </dd>
+
+            <dt class="col-sm-4">Payment Method</dt>
+            <dd class="col-sm-8">@Model.Order.PaymentMethod</dd>
+
+            <dt class="col-sm-4">Shipping Method</dt>
+            <dd class="col-sm-8">@Model.Order.Carrier</dd>
+
+            <dt class="col-sm-4">Tracking</dt>
+            <dd class="col-sm-8">
+                @if (!string.IsNullOrWhiteSpace(Model.Order.TrackingNumber))
+                {
+                    var url = $"https://austpost.com.au/track?id={Model.Order.TrackingNumber}";
+                    <a href="@url" class="link-primary" target="_blank">@Model.Order.TrackingNumber</a>
+                }
+                else
+                {
+                    <span class="text-muted">N/A</span>
+                }
+            </dd>
+        </dl>
+
+        @* <h6 class="mb-3">Items</h6> *@
+        <table class="table table-striped table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Product</th>
+                    <th class="text-end">Qty</th>
+                    <th class="text-end">Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var li in Model.LineItems)
+                {
+                    <tr>
+                        <td>@li.ProductName</td>
+                        <td class="text-end">@li.Quantity</td>
+                        <td class="text-end">@li.Price.ToString("C")</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot class="fw-bold">
+                <tr>
+                    <td colspan="2" class="text-end">Shipping:</td>
+                    <td class="text-end">@Model.CarrierCost.ToString("C")</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="text-end">Sub Total:</td>
+                    <td class="text-end">@Model.ItemsTotal.ToString("C")</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="text-end">Tax:</td>
+                    <td class="text-end">@Model.Tax.ToString("C")</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="text-end">Total:</td>
+                    <td class="text-end">@Model.Total.ToString("C")</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<div class="text-center mb-4">
+    <button id="close-btn" class="btn btn-secondary w-50">🔒 Close</button>
+</div>
